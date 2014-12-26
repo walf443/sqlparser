@@ -6,9 +6,10 @@ import (
 )
 
 func TestParseDropTableStatement(t *testing.T) {
-	parseDropTableStatement(t, "DROP TABLE hoge", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Lit:"hoge"}}})
-	parseDropTableStatement(t, "drop table hoge,fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Lit:"fuga"}, TableNameIdentifier{Lit:"hoge"}}})
-	parseDropTableStatement(t, "drop table `hoge`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Lit:"hoge"}}})
+	parseDropTableStatement(t, "DROP TABLE hoge", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
+	parseDropTableStatement(t, "drop table hoge,fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"fuga"}, TableNameIdentifier{Name:"hoge"}}})
+	parseDropTableStatement(t, "drop table `hoge`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
+	parseDropTableStatement(t, "drop table hoge.fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name:"fuga"}}})
 }
 
 func parseDropTableStatement(t *testing.T, src string, expect interface{}) {

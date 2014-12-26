@@ -66,11 +66,15 @@ table_names
 table_name
     : IDENT
     {
-        $$ = TableNameIdentifier{Lit: $1.lit}
+        $$ = TableNameIdentifier{Name: $1.lit}
     }
     | '`' IDENT '`'
     {
-        $$ = TableNameIdentifier{Lit: $2.lit}
+        $$ = TableNameIdentifier{Name: $2.lit}
+    }
+    | IDENT '.' IDENT
+    {
+        $$ = TableNameIdentifier{Database: $1.lit, Name: $3.lit}
     }
 
 

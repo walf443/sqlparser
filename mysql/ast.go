@@ -20,7 +20,8 @@ func (x *DropTableStatement) statement() {}
 
 type (
 	TableNameIdentifier struct {
-		Lit string
+		Name string
+		Database string
 	}
 )
 
