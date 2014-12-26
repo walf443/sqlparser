@@ -68,6 +68,11 @@ table_name
     {
         $$ = TableNameIdentifier{Lit: $1.lit}
     }
+    | '`' IDENT '`'
+    {
+        $$ = TableNameIdentifier{Lit: $2.lit}
+    }
+
 
 %%
 
