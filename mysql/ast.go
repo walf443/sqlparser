@@ -5,23 +5,23 @@ type (
 		statement()
 	}
 
-	Expression interface {
-		expression()
+	Identifier interface {
+		identifier()
 	}
 )
 
 type (
 	DropTableStatement struct {
-		TableNames []TableNameExpression
+		TableNames []TableNameIdentifier
 	}
 )
 
 func (x *DropTableStatement) statement() {}
 
 type (
-	TableNameExpression struct {
+	TableNameIdentifier struct {
 		Lit string
 	}
 )
 
-func (x *TableNameExpression) expression() {}
+func (x *TableNameIdentifier) identifier() {}

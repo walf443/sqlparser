@@ -17,11 +17,15 @@ type Token struct {
 %union{
     statements []Statement
     statement Statement
+    identifiers []TableNameIdentifier
+    identifier TableNameIdentifier
     tok       Token
 }
 
 %type<statements> statements
 %type<statement> statement
+%type<identifiers> table_names
+%type<identifier> table_name
 
 %token<tok> IDENT DROP TABLE
 
@@ -35,23 +39,34 @@ statements
             l.statements = $$
         }
     }
-    | statement statements
+    | statements statement
     {
-        $$ = append([]Statement{$1}, $2...)
+        $$ = append([]Statement{$2}, $1...)
         if l, isLexerWrapper := yylex.(*LexerWrapper); isLexerWrapper {
             l.statements = $$
         }
     }
 
 statement
-    : DROP TABLE table_name ';'
+    : DROP TABLE table_names ';'
     {
+        $$ = &DropTableStatement{TableNames: $3}
     }
 
+table_names
+    : table_name
+    {
+        $$ = []TableNameIdentifier{$1}
+    }
+    | table_names ',' table_name
+    {
+        $$ = append([]TableNameIdentifier{$3}, $1...)
+    }
 
 table_name
     : IDENT
     {
+        $$ = TableNameIdentifier{Lit: $1.lit}
     }
 
 %%

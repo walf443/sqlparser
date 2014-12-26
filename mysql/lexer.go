@@ -1,5 +1,8 @@
 package mysql
 
+import (
+)
+
 const (
 	EOF     = -1
 	UNKNOWN = 0
@@ -7,7 +10,9 @@ const (
 
 var keywords = map[string]int{
 	"DROP": DROP,
+	"drop": DROP,
 	"TABLE": TABLE,
+	"table": TABLE,
 }
 
 type Position struct {
@@ -30,10 +35,20 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 	s.skipWhiteSpace()
 	pos = s.position()
 	switch ch := s.peek(); {
+	case isLetter(ch):
+		lit = s.scanIdentifier()
+		if keyword, ok := keywords[lit]; ok {
+			tok = keyword
+		} else {
+			tok = IDENT
+		}
 	default:
 		switch ch {
 		case -1:
 			tok = EOF
+		case ';':
+			tok = int(ch)
+			lit = string(ch)
 		}
 		s.next()
 	}
@@ -58,6 +73,10 @@ func (s *Scanner) next() {
 	}
 }
 
+func isLetter(ch rune) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
+}
+
 func isWhiteSpace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
 }
@@ -74,4 +93,14 @@ func (s *Scanner) skipWhiteSpace() {
 	for isWhiteSpace(s.peek()) {
 		s.next()
 	}
+}
+
+func (s *Scanner) scanIdentifier() string {
+	var ret []rune
+	for isLetter(s.peek()) {
+		ret = append(ret, s.peek())
+		s.next()
+	}
+
+	return string(ret)
 }
