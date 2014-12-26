@@ -46,7 +46,7 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 		switch ch {
 		case -1:
 			tok = EOF
-		case ';':
+		case ';', ',':
 			tok = int(ch)
 			lit = string(ch)
 		}
