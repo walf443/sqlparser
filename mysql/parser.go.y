@@ -22,6 +22,7 @@ type Token struct {
     table_name TableNameIdentifier
     database_name DatabaseNameIdentifier
     column_name ColumnNameIdentifier
+    index_name IndexNameIdentifier
     alter_specifications []AlterSpecification
     alter_specification AlterSpecification
     tok       Token
@@ -33,11 +34,12 @@ type Token struct {
 %type<table_name> table_name
 %type<database_name> database_name
 %type<column_name> column_name
+%type<index_name> index_name
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
 
 %token<tok> DROP CREATE ALTER
-%token<tok> IDENT TABLE COLUMN DATABASE
+%token<tok> IDENT TABLE COLUMN DATABASE INDEX KEY
 
 %%
 
@@ -124,10 +126,18 @@ alter_specification
     {
         $$ = &AlterSpecificationDropColumn{ColumnName: $3}
     }
+    | DROP index_or_key index_name
+    {
+        $$ = &AlterSpecificationDropIndex{IndexName: $3}
+    }
 
 skipable_column
     :
     | COLUMN
+
+index_or_key
+    : INDEX
+    | KEY
 
 column_name
     : IDENT
@@ -137,6 +147,16 @@ column_name
     | '`' IDENT '`'
     {
         $$ = ColumnNameIdentifier{Name: $2.lit}
+    }
+
+index_name
+    : IDENT
+    {
+        $$ = IndexNameIdentifier{Name: $1.lit}
+    }
+    | '`' IDENT '`'
+    {
+        $$ = IndexNameIdentifier{Name: $2.lit}
     }
 
 %%

@@ -25,8 +25,12 @@ func TestParseCreateDatabaseStatement(t *testing.T) {
 func TestParseAlterTableStatement(t *testing.T) {
 	testStatement(t, "ALTER TABLE hoge", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, nil })
 	testStatement(t, "alter table `hoge`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, nil })
+
 	testStatement(t, "alter table `hoge` DROP COLUMN fuga", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "fuga"}}}})
 	testStatement(t, "alter table `hoge` DROP `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "fuga"}}} })
+
+	testStatement(t, "alter table `hoge` DROP KEY `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
+	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
 }
 
 
@@ -39,7 +43,7 @@ func testStatement(t *testing.T, src string, expect interface{}) {
 		return
 	}
 	if !reflect.DeepEqual(statements[0], expect) {
-		t.Errorf("\tExpect\t: %+#v, \n\t\tBut Got\t: %+#v", expect, statements[0])
+		t.Errorf("Test failed abount \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, statements[0])
 		return
 	}
 }

@@ -16,6 +16,10 @@ var keywords = map[string]int{
 	"column": COLUMN,
 	"TABLE": TABLE,
 	"table": TABLE,
+	"INDEX": INDEX,
+	"index": INDEX,
+	"KEY": KEY,
+	"key": KEY,
 	"DATABASE": DATABASE,
 	"database": DATABASE,
 }

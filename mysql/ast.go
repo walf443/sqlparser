@@ -46,17 +46,25 @@ type (
 	ColumnNameIdentifier struct {
 		Name string
 	}
+	IndexNameIdentifier struct {
+		Name string
+	}
 )
 
 func (x *TableNameIdentifier) identifier() {}
 func (x *DatabaseNameIdentifier) identifier() {}
 func (x *ColumnNameIdentifier) identifier() {}
+func (x *IndexNameIdentifier) identifier() {}
 
 type (
 	AlterSpecificationDropColumn struct {
 		ColumnName ColumnNameIdentifier
 	}
+	AlterSpecificationDropIndex struct {
+		IndexName IndexNameIdentifier
+	}
 )
 
 func (x *AlterSpecificationDropColumn) alterspecification() {}
+func (x *AlterSpecificationDropIndex) alterspecification() {}
 
