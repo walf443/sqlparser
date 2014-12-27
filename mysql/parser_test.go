@@ -36,7 +36,35 @@ func TestParseAlterTableStatement(t *testing.T) {
 }
 
 func TestParseColumnDefinition(t *testing.T) {
+	testColumnDefinition(t, "BIT", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BIT }})
+	testColumnDefinition(t, "TINYINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_TINYINT, 0, false, false }})
+	testColumnDefinition(t, "SMALLINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_SMALLINT, 0, false, false }})
+	testColumnDefinition(t, "MEDIUMINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_MEDIUMINT, 0, false, false }})
 	testColumnDefinition(t, "INT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
+	testColumnDefinition(t, "INTEGER", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
+	testColumnDefinition(t, "BIGINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_BIGINT, 0, false, false }})
+	testColumnDefinition(t, "REAL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_REAL, 0, false, false }})
+	testColumnDefinition(t, "DOUBLE", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_DOUBLE, 0, false, false }})
+	testColumnDefinition(t, "FLOAT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_FLOAT, 0, false, false }})
+	testColumnDefinition(t, "DECIMAL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_DECIMAL, 0, false, false }})
+	testColumnDefinition(t, "NUMERIC", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_NUMERIC, 0, false, false }})
+	testColumnDefinition(t, "DATE", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_DATE }})
+	testColumnDefinition(t, "TIME", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIME }})
+	testColumnDefinition(t, "TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIMESTAMP }})
+	testColumnDefinition(t, "DATETIME", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_DATETIME }})
+	testColumnDefinition(t, "YEAR", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_YEAR }})
+	testColumnDefinition(t, "CHAR", ColumnDefinition{&DataTypeDefinitionString{ DATATYPE_CHAR, 0, "", "" }})
+	testColumnDefinition(t, "VARCHAR", ColumnDefinition{&DataTypeDefinitionString{ DATATYPE_VARCHAR, 0, "", "" }})
+	testColumnDefinition(t, "BINARY", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BINARY }})
+	testColumnDefinition(t, "VARBINARY", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_VARBINARY }})
+	testColumnDefinition(t, "TINYBLOB", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TINYBLOB }})
+	testColumnDefinition(t, "BLOB", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BLOB }})
+	testColumnDefinition(t, "MEDIUMBLOB", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_MEDIUMBLOB }})
+	testColumnDefinition(t, "LONGBLOB", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_LONGBLOB }})
+	testColumnDefinition(t, "TINYTEXT", ColumnDefinition{&DataTypeDefinitionTextBlob{ DATATYPE_TINYTEXT, false, "", ""}})
+	testColumnDefinition(t, "TEXT", ColumnDefinition{&DataTypeDefinitionTextBlob{ DATATYPE_TEXT, false, "", ""}})
+	testColumnDefinition(t, "MEDIUMTEXT", ColumnDefinition{&DataTypeDefinitionTextBlob{ DATATYPE_MEDIUMTEXT, false, "", ""}})
+	testColumnDefinition(t, "LONGTEXT", ColumnDefinition{&DataTypeDefinitionTextBlob{ DATATYPE_LONGTEXT, false, "", ""}})
 }
 
 
@@ -49,7 +77,7 @@ func testStatement(t *testing.T, src string, expect interface{}) {
 		return
 	}
 	if !reflect.DeepEqual(statements[0], expect) {
-		t.Errorf("Test failed abount \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, statements[0])
+		t.Errorf("Test failed about \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, statements[0])
 		return
 	}
 }
@@ -66,7 +94,7 @@ func testColumnDefinition(t *testing.T, src string, expect interface{}) {
 		if len(v.AlterSpecifications) == 1 {
 			if v, ok := v.AlterSpecifications[0].(*AlterSpecificationAddColumn); ok {
 				if !reflect.DeepEqual(v.ColumnDefinition, expect) {
-					t.Errorf("Test failed abount \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, v.ColumnDefinition)
+					t.Errorf("Test failed about \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, v.ColumnDefinition)
 				}
 			} else {
 				t.Errorf("Expect %q to be parsed, but %+#v", src, v)

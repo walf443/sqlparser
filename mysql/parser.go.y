@@ -192,27 +192,27 @@ data_type
     }
     | BIGINT
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_BIGINT }
     }
     | REAL
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_REAL }
     }
     | DOUBLE
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_DOUBLE }
     }
     | FLOAT
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_FLOAT }
     }
     | DECIMAL
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_DECIMAL }
     }
     | NUMERIC
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_NUMERIC }
     }
     | DATE
     {
