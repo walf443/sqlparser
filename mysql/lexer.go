@@ -1,8 +1,5 @@
 package mysql
 
-import (
-)
-
 const (
 	EOF     = -1
 	UNKNOWN = 0
@@ -71,6 +68,24 @@ func (s *Scanner) next() {
 		}
 		s.offset++
 	}
+}
+
+func (s *Scanner) CurrentLine() string {
+	cursor := s.lineHead
+	var bytes []rune
+	for {
+		ch :=  s.src[cursor]
+
+		if ch == '\n' {
+			break
+		}
+		bytes = append(bytes, ch)
+		cursor++
+		if len(s.src) <= cursor {
+			break
+		}
+	}
+	return string(bytes)
 }
 
 func isLetter(ch rune) bool {

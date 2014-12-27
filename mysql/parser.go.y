@@ -3,7 +3,8 @@
 package mysql
 
 import (
-    "log"
+    "fmt"
+    "os"
 )
 
 type Token struct {
@@ -99,7 +100,13 @@ func (l *LexerWrapper) Lex(lval *yySymType) int {
 }
 
 func (l *LexerWrapper) Error(e string) {
-    log.Fatalf("Line %d, Column %d: %q %s", l.recentPos.Line, l.recentPos.Column, l.recentLit, e)
+    fmt.Printf("%s while processing near %q line %d, col: %d\n", e, l.recentLit, l.recentPos.Line, l.recentPos.Column)
+    fmt.Printf("%s\n", l.scanner.CurrentLine())
+    for i := 0; i < l.recentPos.Column-1; i++ {
+        fmt.Printf(" ")
+    }
+    fmt.Printf("^\n")
+    os.Exit(1)
 }
 
 func Parse(s *Scanner) []Statement {
