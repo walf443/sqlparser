@@ -21,6 +21,9 @@ type Token struct {
     table_names []TableNameIdentifier
     table_name TableNameIdentifier
     database_name DatabaseNameIdentifier
+    column_name ColumnNameIdentifier
+    alter_specifications []AlterSpecification
+    alter_specification AlterSpecification
     tok       Token
 }
 
@@ -29,9 +32,12 @@ type Token struct {
 %type<table_names> table_names
 %type<table_name> table_name
 %type<database_name> database_name
+%type<column_name> column_name
+%type<alter_specifications> alter_specifications
+%type<alter_specification> alter_specification
 
 %token<tok> DROP CREATE ALTER
-%token<tok> IDENT TABLE DATABASE
+%token<tok> IDENT TABLE COLUMN DATABASE
 
 %%
 
@@ -64,9 +70,9 @@ statement
     {
         $$ = &CreateDatabaseStatement{DatabaseName: $3}
     }
-    | ALTER TABLE table_name ';'
+    | ALTER TABLE table_name alter_specifications ';'
     {
-        $$ = &AlterTableStatement{TableName: $3}
+        $$ = &AlterTableStatement{TableName: $3, AlterSpecifications: $4}
     }
 
 table_names
@@ -103,6 +109,35 @@ database_name
         $$ = DatabaseNameIdentifier{Name: $2.lit}
     }
 
+alter_specifications
+    :
+    {
+        $$ = nil
+    }
+    | alter_specifications alter_specification
+    {
+        $$ = append([]AlterSpecification{$2}, $1...)
+    }
+
+alter_specification
+    : DROP skipable_column column_name
+    {
+        $$ = &AlterSpecificationDropColumn{ColumnName: $3}
+    }
+
+skipable_column
+    :
+    | COLUMN
+
+column_name
+    : IDENT
+    {
+        $$ = ColumnNameIdentifier{Name: $1.lit}
+    }
+    | '`' IDENT '`'
+    {
+        $$ = ColumnNameIdentifier{Name: $2.lit}
+    }
 
 %%
 

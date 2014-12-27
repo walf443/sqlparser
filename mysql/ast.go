@@ -8,6 +8,10 @@ type (
 	Identifier interface {
 		identifier()
 	}
+
+	AlterSpecification interface {
+		alterspecification()
+	}
 )
 
 type (
@@ -22,6 +26,7 @@ type (
 	}
 	AlterTableStatement struct {
 		TableName TableNameIdentifier
+		AlterSpecifications []AlterSpecification
 	}
 )
 
@@ -38,7 +43,20 @@ type (
 	DatabaseNameIdentifier struct {
 		Name string
 	}
+	ColumnNameIdentifier struct {
+		Name string
+	}
 )
 
 func (x *TableNameIdentifier) identifier() {}
 func (x *DatabaseNameIdentifier) identifier() {}
+func (x *ColumnNameIdentifier) identifier() {}
+
+type (
+	AlterSpecificationDropColumn struct {
+		ColumnName ColumnNameIdentifier
+	}
+)
+
+func (x *AlterSpecificationDropColumn) alterspecification() {}
+
