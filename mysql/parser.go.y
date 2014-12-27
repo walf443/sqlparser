@@ -30,7 +30,7 @@ type Token struct {
 %type<table_name> table_name
 %type<database_name> database_name
 
-%token<tok> DROP CREATE
+%token<tok> DROP CREATE ALTER
 %token<tok> IDENT TABLE DATABASE
 
 %%
@@ -63,6 +63,10 @@ statement
     | CREATE DATABASE database_name ';'
     {
         $$ = &CreateDatabaseStatement{DatabaseName: $3}
+    }
+    | ALTER TABLE table_name ';'
+    {
+        $$ = &AlterTableStatement{TableName: $3}
     }
 
 table_names

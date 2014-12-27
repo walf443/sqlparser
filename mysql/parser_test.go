@@ -21,6 +21,13 @@ func TestParseCreateDatabaseStatement(t *testing.T) {
 	testStatement(t, "CREATE DATABASE hoge", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
 	testStatement(t, "create database `hoge`", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
 }
+
+func TestParseAlterTableStatement(t *testing.T) {
+	testStatement(t, "ALTER TABLE hoge", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}})
+	testStatement(t, "alter table `hoge`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}})
+}
+
+
 func testStatement(t *testing.T, src string, expect interface{}) {
 	s := new(Scanner)
 	s.Init(src + ";")
