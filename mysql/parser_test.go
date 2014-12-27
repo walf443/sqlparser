@@ -14,9 +14,13 @@ func TestParseDropTableStatement(t *testing.T) {
 
 func TestParseDropDatabaseStatement(t *testing.T) {
 	testStatement(t, "DROP DATABASE hoge", &DropDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
-	testStatement(t, "DROP DATABASE `hoge`", &DropDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
+	testStatement(t, "drop database `hoge`", &DropDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
 }
 
+func TestParseCreateDatabaseStatement(t *testing.T) {
+	testStatement(t, "CREATE DATABASE hoge", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
+	testStatement(t, "create database `hoge`", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
+}
 func testStatement(t *testing.T, src string, expect interface{}) {
 	s := new(Scanner)
 	s.Init(src + ";")
@@ -26,7 +30,7 @@ func testStatement(t *testing.T, src string, expect interface{}) {
 		return
 	}
 	if !reflect.DeepEqual(statements[0], expect) {
-		t.Errorf("Expect %+#v, but got %+#v", expect, statements[0])
+		t.Errorf("\tExpect\t: %+#v, \n\t\tBut Got\t: %+#v", expect, statements[0])
 		return
 	}
 }

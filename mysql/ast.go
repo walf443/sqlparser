@@ -17,10 +17,14 @@ type (
 	DropDatabaseStatement struct {
 		DatabaseName DatabaseNameIdentifier
 	}
+	CreateDatabaseStatement struct {
+		DatabaseName DatabaseNameIdentifier
+	}
 )
 
 func (x *DropTableStatement) statement() {}
 func (x *DropDatabaseStatement) statement() {}
+func (x *CreateDatabaseStatement) statement() {}
 
 type (
 	TableNameIdentifier struct {

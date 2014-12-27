@@ -8,6 +8,8 @@ const (
 var keywords = map[string]int{
 	"DROP": DROP,
 	"drop": DROP,
+	"CREATE": CREATE,
+	"create": CREATE,
 	"TABLE": TABLE,
 	"table": TABLE,
 	"DATABASE": DATABASE,
