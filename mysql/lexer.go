@@ -10,6 +10,8 @@ var keywords = map[string]int{
 	"drop": DROP,
 	"TABLE": TABLE,
 	"table": TABLE,
+	"DATABASE": DATABASE,
+	"database": DATABASE,
 }
 
 type Position struct {

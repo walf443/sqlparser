@@ -6,13 +6,18 @@ import (
 )
 
 func TestParseDropTableStatement(t *testing.T) {
-	parseDropTableStatement(t, "DROP TABLE hoge", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
-	parseDropTableStatement(t, "drop table hoge,fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"fuga"}, TableNameIdentifier{Name:"hoge"}}})
-	parseDropTableStatement(t, "drop table `hoge`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
-	parseDropTableStatement(t, "drop table hoge.fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name:"fuga"}}})
+	testStatement(t, "DROP TABLE hoge", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
+	testStatement(t, "drop table hoge,fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"fuga"}, TableNameIdentifier{Name:"hoge"}}})
+	testStatement(t, "drop table `hoge`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
+	testStatement(t, "drop table hoge.fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name:"fuga"}}})
 }
 
-func parseDropTableStatement(t *testing.T, src string, expect interface{}) {
+func TestParseDropDatabaseStatement(t *testing.T) {
+	testStatement(t, "DROP DATABASE hoge", &DropDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
+	testStatement(t, "DROP DATABASE `hoge`", &DropDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
+}
+
+func testStatement(t *testing.T, src string, expect interface{}) {
 	s := new(Scanner)
 	s.Init(src + ";")
 	statements := Parse(s)
@@ -21,7 +26,7 @@ func parseDropTableStatement(t *testing.T, src string, expect interface{}) {
 		return
 	}
 	if !reflect.DeepEqual(statements[0], expect) {
-		t.Errorf("Expect %+#v to be %+#v", statements[0], expect)
+		t.Errorf("Expect %+#v, but got %+#v", expect, statements[0])
 		return
 	}
 }

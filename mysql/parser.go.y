@@ -18,17 +18,19 @@ type Token struct {
 %union{
     statements []Statement
     statement Statement
-    identifiers []TableNameIdentifier
-    identifier TableNameIdentifier
+    table_names []TableNameIdentifier
+    table_name TableNameIdentifier
+    database_name DatabaseNameIdentifier
     tok       Token
 }
 
 %type<statements> statements
 %type<statement> statement
-%type<identifiers> table_names
-%type<identifier> table_name
+%type<table_names> table_names
+%type<table_name> table_name
+%type<database_name> database_name
 
-%token<tok> IDENT DROP TABLE
+%token<tok> IDENT DROP TABLE DATABASE
 
 %%
 
@@ -53,6 +55,10 @@ statement
     {
         $$ = &DropTableStatement{TableNames: $3}
     }
+    | DROP DATABASE database_name ';'
+    {
+        $$ = &DropDatabaseStatement{DatabaseName: $3}
+    }
 
 table_names
     : table_name
@@ -76,6 +82,16 @@ table_name
     | IDENT '.' IDENT
     {
         $$ = TableNameIdentifier{Database: $1.lit, Name: $3.lit}
+    }
+
+database_name
+    : IDENT
+    {
+        $$ = DatabaseNameIdentifier{Name: $1.lit}
+    }
+    | '`' IDENT '`'
+    {
+        $$ = DatabaseNameIdentifier{Name: $2.lit}
     }
 
 
