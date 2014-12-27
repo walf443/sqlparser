@@ -15,6 +15,7 @@ type (
 
 	ColumnDefinition struct {
 		DataTypeDefinition DataTypeDefinition
+		Nullable bool
 	}
 
 	DataTypeDefinition interface {

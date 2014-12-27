@@ -56,6 +56,8 @@ var keywords = map[string]int{
 	"key": KEY,
 	"DATABASE": DATABASE,
 	"database": DATABASE,
+	"NULL": NULL,
+	"NOT": NOT,
 
 	// datatypes
 	"BIT": BIT,
