@@ -214,13 +214,13 @@ data_type
     {
         $$ = &DataTypeDefinitionSimple{Type: DATATYPE_YEAR }
     }
-    | CHAR
+    | CHAR length_option
     {
-        $$ = &DataTypeDefinitionString{Type: DATATYPE_CHAR }
+        $$ = &DataTypeDefinitionString{Type: DATATYPE_CHAR, Length: $2 }
     }
-    | VARCHAR
+    | VARCHAR length_option
     {
-        $$ = &DataTypeDefinitionString{Type: DATATYPE_VARCHAR }
+        $$ = &DataTypeDefinitionString{Type: DATATYPE_VARCHAR, Length: $2 }
     }
     | BINARY
     {
@@ -316,13 +316,13 @@ data_type_decimal
 length_option
     :
     {
-        $$ = 10
+        $$ = 0
     }
     | '(' NUMBER ')'
     {
         num, err := strconv.Atoi($2.lit)
         if err != nil {
-            num = 10
+            num = 0
         }
         $$ = uint(num)
     }
