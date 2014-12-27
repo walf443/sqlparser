@@ -32,7 +32,7 @@ func TestParseAlterTableStatement(t *testing.T) {
 	testStatement(t, "alter table `hoge` DROP KEY `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
 	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
 
-	testStatement(t, "alter table `hoge` ADD COLUMN `fuga` INT", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddColumn{ColumnNameIdentifier{Name: "fuga"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}}}}})
+	testStatement(t, "alter table `hoge` ADD COLUMN `fuga` INT", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddColumn{ColumnNameIdentifier{Name: "fuga"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, false, false}}}}})
 }
 
 func TestParseColumnDefinition(t *testing.T) {
@@ -40,7 +40,8 @@ func TestParseColumnDefinition(t *testing.T) {
 	testColumnDefinition(t, "TINYINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_TINYINT, 0, false, false }})
 	testColumnDefinition(t, "SMALLINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_SMALLINT, 0, false, false }})
 	testColumnDefinition(t, "MEDIUMINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_MEDIUMINT, 0, false, false }})
-	testColumnDefinition(t, "INT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
+	testColumnDefinition(t, "INT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, false, false }})
+	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }})
 	testColumnDefinition(t, "INTEGER", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
 	testColumnDefinition(t, "BIGINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_BIGINT, 0, false, false }})
 	testColumnDefinition(t, "REAL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_REAL, 0, false, false }})

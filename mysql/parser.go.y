@@ -5,6 +5,7 @@ package mysql
 import (
     "fmt"
     "os"
+    "strconv"
 )
 
 type Token struct {
@@ -27,6 +28,8 @@ type Token struct {
     alter_specifications []AlterSpecification
     alter_specification AlterSpecification
     data_type DataTypeDefinition
+    bool bool
+    uint uint
     tok       Token
 }
 
@@ -41,10 +44,13 @@ type Token struct {
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
 %type<data_type> data_type
+%type<bool> unsigned_option zerofill_option
+%type<uint> length_option
 
+%token<tok> IDENT NUMBER
 %token<tok> DROP CREATE ALTER ADD
-%token<tok> IDENT TABLE COLUMN DATABASE INDEX KEY
-%token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT
+%token<tok> TABLE COLUMN DATABASE INDEX KEY
+%token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
 %%
 
@@ -182,9 +188,9 @@ data_type
     {
         $$ = &DataTypeDefinitionNumber{Type: DATATYPE_MEDIUMINT }
     }
-    | INT
+    | INT length_option unsigned_option zerofill_option
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT, Length: $2, Unsigned: $3, Zerofill: $4 }
     }
     | INTEGER
     {
@@ -281,6 +287,40 @@ data_type
     | LONGTEXT
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_LONGTEXT }
+    }
+
+length_option
+    :
+    {
+        $$ = 10
+    }
+    | '(' NUMBER ')'
+    {
+        num, err := strconv.Atoi($2.lit)
+        if err != nil {
+            num = 10
+        }
+        $$ = uint(num)
+    }
+
+unsigned_option
+    :
+    {
+        $$ = false
+    }
+    | UNSIGNED
+    {
+        $$ = true
+    }
+
+zerofill_option
+    :
+    {
+        $$ = false
+    }
+    | ZEROFILL
+    {
+        $$ = true
     }
 
 

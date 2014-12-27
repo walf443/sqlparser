@@ -87,6 +87,10 @@ var keywords = map[string]int{
 	"TEXT": TEXT,
 	"MEDIUMTEXT": MEDIUMTEXT,
 	"LONGTEXT": LONGTEXT,
+
+	// datatype options
+	"UNSIGNED": UNSIGNED,
+	"ZEROFILL": ZEROFILL,
 }
 
 type Position struct {
@@ -116,11 +120,14 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 		} else {
 			tok = IDENT
 		}
+	case isNumber(ch):
+		lit = s.scanNumber()
+		tok = NUMBER
 	default:
 		switch ch {
 		case -1:
 			tok = EOF
-		case ';', ',', '`', '.':
+		case ';', ',', '`', '.', '(', ')':
 			tok = int(ch)
 			lit = string(ch)
 		}
@@ -169,6 +176,10 @@ func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
 }
 
+func isNumber(ch rune) bool {
+	return '0' <= ch && ch <= '9';
+}
+
 func isWhiteSpace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
 }
@@ -189,10 +200,19 @@ func (s *Scanner) skipWhiteSpace() {
 
 func (s *Scanner) scanIdentifier() string {
 	var ret []rune
-	for isLetter(s.peek()) {
+	for isLetter(s.peek()) || isNumber(s.peek()) {
 		ret = append(ret, s.peek())
 		s.next()
 	}
 
+	return string(ret)
+}
+
+func (s *Scanner) scanNumber() string {
+	var ret []rune
+	for isNumber(s.peek()) {
+		ret = append(ret, s.peek())
+		s.next()
+	}
 	return string(ret)
 }
