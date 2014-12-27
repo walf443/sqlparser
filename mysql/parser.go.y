@@ -29,6 +29,7 @@ type Token struct {
     alter_specification AlterSpecification
     data_type DataTypeDefinition
     bool bool
+    data_type_type DataType
     uint uint
     tok       Token
 }
@@ -44,6 +45,7 @@ type Token struct {
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
 %type<data_type> data_type
+%type<data_type_type> data_type_number
 %type<bool> unsigned_option zerofill_option
 %type<uint> length_option
 
@@ -176,29 +178,9 @@ data_type
     {
         $$ = &DataTypeDefinitionSimple{Type: DATATYPE_BIT }
     }
-    | TINYINT
+    | data_type_number length_option unsigned_option zerofill_option
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_TINYINT }
-    }
-    | SMALLINT
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_SMALLINT }
-    }
-    | MEDIUMINT
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_MEDIUMINT }
-    }
-    | INT length_option unsigned_option zerofill_option
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT, Length: $2, Unsigned: $3, Zerofill: $4 }
-    }
-    | INTEGER
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
-    }
-    | BIGINT
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_BIGINT }
+        $$ = &DataTypeDefinitionNumber{Type: $1, Length: $2, Unsigned: $3, Zerofill: $4 }
     }
     | REAL
     {
@@ -287,6 +269,32 @@ data_type
     | LONGTEXT
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_LONGTEXT }
+    }
+
+data_type_number
+    : TINYINT
+    {
+        $$ = DATATYPE_TINYINT
+    }
+    | SMALLINT
+    {
+        $$ = DATATYPE_SMALLINT
+    }
+    | MEDIUMINT
+    {
+        $$ = DATATYPE_MEDIUMINT
+    }
+    | INT
+    {
+        $$ = DATATYPE_INT
+    }
+    | INTEGER
+    {
+        $$ = DATATYPE_INT
+    }
+    | BIGINT
+    {
+        $$ = DATATYPE_BIGINT
     }
 
 length_option

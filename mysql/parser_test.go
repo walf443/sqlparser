@@ -37,13 +37,13 @@ func TestParseAlterTableStatement(t *testing.T) {
 
 func TestParseColumnDefinition(t *testing.T) {
 	testColumnDefinition(t, "BIT", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BIT }})
-	testColumnDefinition(t, "TINYINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_TINYINT, 0, false, false }})
-	testColumnDefinition(t, "SMALLINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_SMALLINT, 0, false, false }})
-	testColumnDefinition(t, "MEDIUMINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_MEDIUMINT, 0, false, false }})
+	testColumnDefinition(t, "TINYINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_TINYINT, 10, false, false }})
+	testColumnDefinition(t, "SMALLINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_SMALLINT, 10, false, false }})
+	testColumnDefinition(t, "MEDIUMINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_MEDIUMINT, 10, false, false }})
 	testColumnDefinition(t, "INT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, false, false }})
 	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }})
-	testColumnDefinition(t, "INTEGER", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
-	testColumnDefinition(t, "BIGINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_BIGINT, 0, false, false }})
+	testColumnDefinition(t, "INTEGER", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, false, false }})
+	testColumnDefinition(t, "BIGINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_BIGINT, 10, false, false }})
 	testColumnDefinition(t, "REAL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_REAL, 0, false, false }})
 	testColumnDefinition(t, "DOUBLE", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_DOUBLE, 0, false, false }})
 	testColumnDefinition(t, "FLOAT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_FLOAT, 0, false, false }})
