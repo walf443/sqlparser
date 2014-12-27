@@ -16,6 +16,7 @@ type (
 	ColumnDefinition struct {
 		DataTypeDefinition DataTypeDefinition
 		Nullable bool
+		AutoIncrement bool
 	}
 
 	DataTypeDefinition interface {

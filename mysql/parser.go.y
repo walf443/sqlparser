@@ -47,13 +47,13 @@ type Token struct {
 %type<alter_specification> alter_specification
 %type<data_type> data_type
 %type<data_type_type> data_type_number data_type_fraction data_type_decimal
-%type<bool> unsigned_option zerofill_option nullable
+%type<bool> unsigned_option zerofill_option nullable autoincrement
 %type<uint> length_option
 %type<fraction_option> fraction_option decimal_option
 
 %token<tok> IDENT NUMBER
 %token<tok> DROP CREATE ALTER ADD
-%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL
+%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
 %%
@@ -157,7 +157,7 @@ skipable_column
 column_definition
     : data_type nullable default autoincrement key_options column_comment
     {
-        $$ = ColumnDefinition{$1, $2}
+        $$ = ColumnDefinition{$1, $2, $4}
     }
 
 nullable
@@ -179,6 +179,13 @@ default
 
 autoincrement
     :
+    {
+        $$ = false
+    }
+    | AUTO_INCREMENT
+    {
+        $$ = true
+    }
 
 key_options
     :

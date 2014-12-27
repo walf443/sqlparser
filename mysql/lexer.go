@@ -58,6 +58,7 @@ var keywords = map[string]int{
 	"database": DATABASE,
 	"NULL": NULL,
 	"NOT": NOT,
+	"AUTO_INCREMENT": AUTO_INCREMENT,
 
 	// datatypes
 	"BIT": BIT,
