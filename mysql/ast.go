@@ -91,6 +91,13 @@ type (
 		Unsigned bool
 		Zerofill bool
 	}
+	DataTypeDefinitionFraction struct {
+		Type DataType
+		Length uint
+		Decimals uint
+		Unsigned bool
+		Zerofill bool
+	}
 	DataTypeDefinitionString struct {
 		Type DataType
 		Length uint
@@ -107,5 +114,6 @@ type (
 
 func (x *DataTypeDefinitionSimple) data_type_definition() {}
 func (x *DataTypeDefinitionNumber) data_type_definition() {}
+func (x *DataTypeDefinitionFraction) data_type_definition() {}
 func (x *DataTypeDefinitionString) data_type_definition() {}
 func (x *DataTypeDefinitionTextBlob) data_type_definition() {}

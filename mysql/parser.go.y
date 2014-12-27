@@ -31,6 +31,7 @@ type Token struct {
     bool bool
     data_type_type DataType
     uint uint
+    fraction_option []uint
     tok       Token
 }
 
@@ -45,9 +46,10 @@ type Token struct {
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
 %type<data_type> data_type
-%type<data_type_type> data_type_number
+%type<data_type_type> data_type_number data_type_fraction data_type_decimal
 %type<bool> unsigned_option zerofill_option
 %type<uint> length_option
+%type<fraction_option> fraction_option decimal_option
 
 %token<tok> IDENT NUMBER
 %token<tok> DROP CREATE ALTER ADD
@@ -182,25 +184,15 @@ data_type
     {
         $$ = &DataTypeDefinitionNumber{Type: $1, Length: $2, Unsigned: $3, Zerofill: $4 }
     }
-    | REAL
+    | data_type_fraction fraction_option unsigned_option zerofill_option
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_REAL }
+        fraction := $2
+        $$ = &DataTypeDefinitionFraction{Type: $1, Length: fraction[0], Decimals: fraction[1], Unsigned: $3, Zerofill: $4 }
     }
-    | DOUBLE
+    | data_type_decimal decimal_option unsigned_option zerofill_option
     {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_DOUBLE }
-    }
-    | FLOAT
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_FLOAT }
-    }
-    | DECIMAL
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_DECIMAL }
-    }
-    | NUMERIC
-    {
-        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_NUMERIC }
+        fraction := $2
+        $$ = &DataTypeDefinitionFraction{Type: $1, Length: fraction[0], Decimals: fraction[1], Unsigned: $3, Zerofill: $4 }
     }
     | DATE
     {
@@ -297,6 +289,30 @@ data_type_number
         $$ = DATATYPE_BIGINT
     }
 
+data_type_fraction
+    : REAL
+    {
+        $$ = DATATYPE_REAL
+    }
+    | DOUBLE
+    {
+        $$ = DATATYPE_DOUBLE
+    }
+    | FLOAT
+    {
+        $$ = DATATYPE_FLOAT
+    }
+
+data_type_decimal
+    : DECIMAL
+    {
+        $$ = DATATYPE_DECIMAL
+    }
+    | NUMERIC
+    {
+        $$ = DATATYPE_NUMERIC
+    }
+
 length_option
     :
     {
@@ -309,6 +325,59 @@ length_option
             num = 10
         }
         $$ = uint(num)
+    }
+
+fraction_option
+    :
+    {
+        $$ = []uint{0, 0}
+    }
+    | '(' NUMBER ',' NUMBER ')'
+    {
+        num1, err := strconv.Atoi($2.lit)
+        if err != nil {
+            num1 = 0
+        }
+        num2, err := strconv.Atoi($4.lit)
+        if err != nil {
+            num2 = 0
+        }
+        result := []uint{}
+        result = append(result, uint(num1))
+        result = append(result, uint(num2))
+        $$ = result
+    }
+
+decimal_option
+    :
+    {
+        $$ = []uint{0, 0}
+    }
+    | '(' NUMBER ')'
+    {
+        result := []uint{}
+        num1, err := strconv.Atoi($2.lit)
+        if err != nil {
+            num1 = 0
+        }
+        result = append(result, uint(num1))
+        result = append(result, 0)
+        $$ = result
+    }
+    | '(' NUMBER ',' NUMBER ')'
+    {
+        num1, err := strconv.Atoi($2.lit)
+        if err != nil {
+            num1 = 0
+        }
+        num2, err := strconv.Atoi($4.lit)
+        if err != nil {
+            num2 = 0
+        }
+        result := []uint{}
+        result = append(result, uint(num1))
+        result = append(result, uint(num2))
+        $$ = result
     }
 
 unsigned_option
