@@ -31,7 +31,7 @@ type Token struct {
     bool bool
     data_type_type DataType
     uint uint
-    fraction_option []uint
+    fraction_option [2]uint
     tok       Token
 }
 
@@ -330,7 +330,7 @@ length_option
 fraction_option
     :
     {
-        $$ = []uint{0, 0}
+        $$ = [2]uint{0, 0}
     }
     | '(' NUMBER ',' NUMBER ')'
     {
@@ -342,26 +342,25 @@ fraction_option
         if err != nil {
             num2 = 0
         }
-        result := []uint{}
-        result = append(result, uint(num1))
-        result = append(result, uint(num2))
+        result := [2]uint{0, 0}
+        result[0] = uint(num1)
+        result[1] = uint(num2)
         $$ = result
     }
 
 decimal_option
     :
     {
-        $$ = []uint{0, 0}
+        $$ = [2]uint{0, 0}
     }
     | '(' NUMBER ')'
     {
-        result := []uint{}
+        result := [2]uint{0, 0}
         num1, err := strconv.Atoi($2.lit)
         if err != nil {
             num1 = 0
         }
-        result = append(result, uint(num1))
-        result = append(result, 0)
+        result[0] = uint(num1)
         $$ = result
     }
     | '(' NUMBER ',' NUMBER ')'
@@ -374,9 +373,9 @@ decimal_option
         if err != nil {
             num2 = 0
         }
-        result := []uint{}
-        result = append(result, uint(num1))
-        result = append(result, uint(num2))
+        result := [2]uint{0, 0}
+        result[0] = uint(num1)
+        result[1] = uint(num2)
         $$ = result
     }
 
