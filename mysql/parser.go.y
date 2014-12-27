@@ -72,7 +72,7 @@ statements
     }
     | statements statement
     {
-        $$ = append([]Statement{$2}, $1...)
+        $$ = append($1, $2)
         if l, isLexerWrapper := yylex.(*LexerWrapper); isLexerWrapper {
             l.statements = $$
         }
@@ -107,7 +107,7 @@ create_definitions
     }
     | create_definitions ',' create_definition
     {
-        $$ = append([]CreateDefinition{$3}, $1...)
+        $$ = append($1, $3)
     }
 
 create_definition
