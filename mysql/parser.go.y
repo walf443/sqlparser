@@ -28,6 +28,8 @@ type Token struct {
     alter_specifications []AlterSpecification
     alter_specification AlterSpecification
     data_type DataTypeDefinition
+    create_definitions []CreateDefinition
+    create_definition CreateDefinition
     bool bool
     data_type_type DataType
     uint uint
@@ -45,6 +47,8 @@ type Token struct {
 %type<column_definition> column_definition
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
+%type<create_definition> create_definition
+%type<create_definitions> create_definitions
 %type<data_type> data_type
 %type<data_type_type> data_type_number data_type_fraction data_type_decimal
 %type<bool> unsigned_option zerofill_option nullable autoincrement
@@ -87,9 +91,29 @@ statement
     {
         $$ = &CreateDatabaseStatement{DatabaseName: $3}
     }
+    | CREATE TABLE table_name '(' create_definitions ')' ';'
+    {
+        $$ = &CreateTableStatement{TableName: $3, CreateDefinitions: $5}
+    }
     | ALTER TABLE table_name alter_specifications ';'
     {
         $$ = &AlterTableStatement{TableName: $3, AlterSpecifications: $4}
+    }
+
+create_definitions
+    : create_definition
+    {
+        $$ = []CreateDefinition{$1}
+    }
+    | create_definitions ',' create_definition
+    {
+        $$ = append([]CreateDefinition{$3}, $1...)
+    }
+
+create_definition
+    : column_name column_definition
+    {
+        $$ = &CreateDefinitionColumn{ColumnName: $1, ColumnDefinition: $2}
     }
 
 table_names

@@ -22,6 +22,10 @@ type (
 	DataTypeDefinition interface {
 		data_type_definition()
 	}
+
+	CreateDefinition interface {
+		create_definition()
+	}
 )
 
 type (
@@ -38,12 +42,18 @@ type (
 		TableName TableNameIdentifier
 		AlterSpecifications []AlterSpecification
 	}
+
+	CreateTableStatement struct {
+		TableName TableNameIdentifier
+		CreateDefinitions []CreateDefinition
+	}
 )
 
 func (x *DropTableStatement) statement() {}
 func (x *DropDatabaseStatement) statement() {}
 func (x *CreateDatabaseStatement) statement() {}
 func (x *AlterTableStatement) statement() {}
+func (x *CreateTableStatement) statement() {}
 
 type (
 	TableNameIdentifier struct {
@@ -119,3 +129,12 @@ func (x *DataTypeDefinitionNumber) data_type_definition() {}
 func (x *DataTypeDefinitionFraction) data_type_definition() {}
 func (x *DataTypeDefinitionString) data_type_definition() {}
 func (x *DataTypeDefinitionTextBlob) data_type_definition() {}
+
+type (
+	CreateDefinitionColumn struct {
+		ColumnName ColumnNameIdentifier
+		ColumnDefinition ColumnDefinition
+	}
+)
+
+func (x *CreateDefinitionColumn) create_definition() {}
