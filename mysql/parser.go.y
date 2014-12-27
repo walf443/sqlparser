@@ -23,8 +23,10 @@ type Token struct {
     database_name DatabaseNameIdentifier
     column_name ColumnNameIdentifier
     index_name IndexNameIdentifier
+    column_definition ColumnDefinition
     alter_specifications []AlterSpecification
     alter_specification AlterSpecification
+    data_type DataTypeDefinition
     tok       Token
 }
 
@@ -35,11 +37,14 @@ type Token struct {
 %type<database_name> database_name
 %type<column_name> column_name
 %type<index_name> index_name
+%type<column_definition> column_definition
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
+%type<data_type> data_type
 
-%token<tok> DROP CREATE ALTER
+%token<tok> DROP CREATE ALTER ADD
 %token<tok> IDENT TABLE COLUMN DATABASE INDEX KEY
+%token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT
 
 %%
 
@@ -122,18 +127,162 @@ alter_specifications
     }
 
 alter_specification
-    : DROP skipable_column column_name
+    : ADD skipable_column column_name column_definition
     {
-        $$ = &AlterSpecificationDropColumn{ColumnName: $3}
+        $$ = &AlterSpecificationAddColumn{ColumnName: $3, ColumnDefinition: $4}
     }
     | DROP index_or_key index_name
     {
         $$ = &AlterSpecificationDropIndex{IndexName: $3}
     }
+    | DROP skipable_column column_name
+    {
+        $$ = &AlterSpecificationDropColumn{ColumnName: $3}
+    }
 
 skipable_column
     :
     | COLUMN
+
+column_definition
+    : data_type nullable default autoincrement key_options column_comment
+    {
+        $$ = ColumnDefinition{$1}
+    }
+
+nullable
+    :
+
+default
+    :
+
+autoincrement
+    :
+
+key_options
+    :
+
+column_comment
+    :
+
+data_type
+    : BIT
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_BIT }
+    }
+    | TINYINT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_TINYINT }
+    }
+    | SMALLINT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_SMALLINT }
+    }
+    | MEDIUMINT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_MEDIUMINT }
+    }
+    | INT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | INTEGER
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | BIGINT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | REAL
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | DOUBLE
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | FLOAT
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | DECIMAL
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | NUMERIC
+    {
+        $$ = &DataTypeDefinitionNumber{Type: DATATYPE_INT }
+    }
+    | DATE
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_DATE }
+    }
+    | TIME
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_TIME }
+    }
+    | TIMESTAMP
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_TIMESTAMP }
+    }
+    | DATETIME
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_DATETIME }
+    }
+    | YEAR
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_YEAR }
+    }
+    | CHAR
+    {
+        $$ = &DataTypeDefinitionString{Type: DATATYPE_CHAR }
+    }
+    | VARCHAR
+    {
+        $$ = &DataTypeDefinitionString{Type: DATATYPE_VARCHAR }
+    }
+    | BINARY
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_BINARY }
+    }
+    | VARBINARY
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_VARBINARY }
+    }
+    | TINYBLOB
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_TINYBLOB }
+    }
+    | BLOB
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_BLOB }
+    }
+    | MEDIUMBLOB
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_MEDIUMBLOB }
+    }
+    | LONGBLOB
+    {
+        $$ = &DataTypeDefinitionSimple{Type: DATATYPE_LONGBLOB }
+    }
+    | TINYTEXT
+    {
+        $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_TINYTEXT }
+    }
+    | TEXT
+    {
+        $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_TEXT }
+    }
+    | MEDIUMTEXT
+    {
+        $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_MEDIUMTEXT }
+    }
+    | LONGTEXT
+    {
+        $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_LONGTEXT }
+    }
+
 
 index_or_key
     : INDEX

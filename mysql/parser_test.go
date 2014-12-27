@@ -31,6 +31,12 @@ func TestParseAlterTableStatement(t *testing.T) {
 
 	testStatement(t, "alter table `hoge` DROP KEY `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
 	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
+
+	testStatement(t, "alter table `hoge` ADD COLUMN `fuga` INT", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddColumn{ColumnNameIdentifier{Name: "fuga"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}}}}})
+}
+
+func TestParseColumnDefinition(t *testing.T) {
+	testColumnDefinition(t, "INT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }})
 }
 
 
@@ -48,3 +54,27 @@ func testStatement(t *testing.T, src string, expect interface{}) {
 	}
 }
 
+func testColumnDefinition(t *testing.T, src string, expect interface{}) {
+	s := new(Scanner)
+	s.Init("ALTER TABLE hoge ADD COLUMN fuga " + src + ";")
+	statements := Parse(s)
+	if len(statements) != 1 {
+		t.Errorf("Expect %q to be parsed, but %+#v", src, statements)
+		return
+	}
+	if v, ok := statements[0].(*AlterTableStatement); ok {
+		if len(v.AlterSpecifications) == 1 {
+			if v, ok := v.AlterSpecifications[0].(*AlterSpecificationAddColumn); ok {
+				if !reflect.DeepEqual(v.ColumnDefinition, expect) {
+					t.Errorf("Test failed abount \"%s\":\n\tExpect\t: %+#v, \n\tBut Got\t: %+#v", src, expect, v.ColumnDefinition)
+				}
+			} else {
+				t.Errorf("Expect %q to be parsed, but %+#v", src, v)
+			}
+		} else {
+			t.Errorf("Expect %q to be parsed, but %+#v", src, v)
+		}
+	} else {
+		t.Errorf("statement should be AlterTableStatement\n")
+	}
+}
