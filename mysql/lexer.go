@@ -117,6 +117,8 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 		switch s.nextLiteral {
 		case "*/":
 			tok = COMMENT_FINISH
+		case "`":
+			tok = int('`')
 		}
 		pos = s.position()
 		for i := 0; i < len(s.nextLiteral); i++ {
@@ -132,9 +134,9 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 		switch ch := s.peek(); {
 		case ch == '/' && s.readAhead(1) == '*':
 			s.next()
+			s.next()
 			tok = COMMENT_START
 			lit = "/*"
-			s.next()
 			s.markRawUntil = []rune{'*', '/'}
 		case isLetter(ch):
 			lit = s.scanIdentifier()
@@ -146,6 +148,11 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 		case isNumber(ch):
 			lit = s.scanNumber()
 			tok = NUMBER
+		case ch == '`':
+			s.markRawUntil = []rune{'`'}
+			tok = int(ch)
+			lit = string(ch)
+			s.next()
 		default:
 			switch ch {
 			case -1:
@@ -258,13 +265,13 @@ func (s *Scanner) scanUntil(finish []rune) (string, error) {
 		if ch == finish[cursor] {
 			for {
 				cursor++
+				if cursor > finish_pos {
+					return string(ret), nil
+				}
 				ch2 := s.readAhead(cursor)
 				if ch2 != finish[cursor] {
 					cursor = 0
 					break
-				}
-				if cursor == finish_pos {
-					return string(ret), nil
 				}
 				if ch2 == -1 {
 					return "", errors.New(fmt.Sprintf("unexpected EOF string. exptected \"%s\"", finish))

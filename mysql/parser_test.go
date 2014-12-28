@@ -8,7 +8,7 @@ import (
 func TestParseDropTableStatement(t *testing.T) {
 	testStatement(t, "DROP TABLE hoge", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
 	testStatement(t, "drop table hoge,fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"fuga"}, TableNameIdentifier{Name:"hoge"}}})
-	testStatement(t, "drop table `hoge`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"hoge"}}})
+	testStatement(t, "drop table `TABLE`", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Name:"TABLE"}}})
 	testStatement(t, "drop table hoge.fuga", &DropTableStatement{TableNames:[]TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name:"fuga"}}})
 }
 
@@ -20,12 +20,6 @@ func TestParseDropDatabaseStatement(t *testing.T) {
 func TestParseCreateDatabaseStatement(t *testing.T) {
 	testStatement(t, "CREATE DATABASE hoge", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
 	testStatement(t, "create database `hoge`", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
-}
-
-func TestParseCommentStatement(t *testing.T) {
-	testStatement(t, "/* hoge */", &CommentStatement{" hoge "})
-	testStatement(t, "/* あいうえお */", &CommentStatement{" あいうえお "})
-	testStatement(t, "/* SELECT * FROM hoge; */", &CommentStatement{" SELECT * FROM hoge; "})
 }
 
 func TestCreateTableStatement(t *testing.T) {
@@ -47,6 +41,12 @@ func TestParseAlterTableStatement(t *testing.T) {
 	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}} })
 
 	testStatement(t, "alter table `hoge` ADD COLUMN `fuga` INT", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddColumn{ColumnNameIdentifier{Name: "fuga"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}, true, false}}}})
+}
+
+func TestParseCommentStatement(t *testing.T) {
+	testStatement(t, "/* hoge */", &CommentStatement{" hoge "})
+	testStatement(t, "/* あいうえお */", &CommentStatement{" あいうえお "})
+	testStatement(t, "/* SELECT * FROM hoge; */", &CommentStatement{" SELECT * FROM hoge; "})
 }
 
 func TestParseColumnDefinition(t *testing.T) {

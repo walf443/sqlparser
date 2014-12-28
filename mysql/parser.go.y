@@ -135,7 +135,7 @@ table_name
     {
         $$ = TableNameIdentifier{Name: $1.lit}
     }
-    | '`' IDENT '`'
+    | '`' RAW '`'
     {
         $$ = TableNameIdentifier{Name: $2.lit}
     }
@@ -149,7 +149,7 @@ database_name
     {
         $$ = DatabaseNameIdentifier{Name: $1.lit}
     }
-    | '`' IDENT '`'
+    | '`' RAW '`'
     {
         $$ = DatabaseNameIdentifier{Name: $2.lit}
     }
@@ -455,7 +455,7 @@ column_name
     {
         $$ = ColumnNameIdentifier{Name: $1.lit}
     }
-    | '`' IDENT '`'
+    | '`' RAW '`'
     {
         $$ = ColumnNameIdentifier{Name: $2.lit}
     }
@@ -465,7 +465,7 @@ index_name
     {
         $$ = IndexNameIdentifier{Name: $1.lit}
     }
-    | '`' IDENT '`'
+    | '`' RAW '`'
     {
         $$ = IndexNameIdentifier{Name: $2.lit}
     }
