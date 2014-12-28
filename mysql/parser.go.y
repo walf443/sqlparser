@@ -409,15 +409,15 @@ data_type
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_TINYTEXT }
     }
-    | TEXT
+    | TEXT optional_character_set optional_collate
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_TEXT }
     }
-    | MEDIUMTEXT
+    | MEDIUMTEXT optional_character_set optional_collate
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_MEDIUMTEXT }
     }
-    | LONGTEXT
+    | LONGTEXT optional_character_set optional_collate
     {
         $$ = &DataTypeDefinitionTextBlob{Type: DATATYPE_LONGTEXT }
     }
