@@ -69,6 +69,7 @@ var keywords = map[string]int{
 	"ENGINE":            ENGINE,
 	"CHARSET":           CHARSET,
 	"CHARACTER":         CHARACTER,
+	"COLLATE":           COLLATE,
 	"SET":               SET,
 	"AVG_ROW_LENGTH":    AVG_ROW_LENGTH,
 	"CHECKSUM":          CHECKSUM,

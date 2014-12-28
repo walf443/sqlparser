@@ -62,7 +62,7 @@ type Token struct {
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
 %token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE PRIMARY UNIQUE
-%token<tok> USING BTREE HASH CHARSET CHARACTER SET
+%token<tok> USING BTREE HASH CHARSET CHARACTER SET COLLATE
 %token<tok> ENGINE AVG_ROW_LENGTH CHECKSUM COMMENT KEY_BLOCK_SIZE MAX_ROWS MIN_ROWS ROW_FORMAT DYNAMIC FIXED COMPRESSED REDUNDANT COMPACT
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
@@ -129,7 +129,7 @@ create_definition
     {
         $$ = &CreateDefinitionPrimaryIndex{Columns: $5}
     }
-    | index_or_key skipable_index_name skipable_index_type '(' index_column_names ')'
+    | index_or_key skipable_index_name skipable_index_type '(' index_column_names ')' skipable_index_type
     {
         $$ = &CreateDefinitionIndex{Name: $2, Columns: $5}
     }
@@ -154,6 +154,7 @@ table_option
     | MIN_ROWS skipable_equal NUMBER
     | ROW_FORMAT skipable_equal row_format
     | DEFAULT CHARSET skipable_equal storage_engine_name
+    | COLLATE skipable_equal storage_engine_name
 
 charset_or_character_set
     : CHARSET
