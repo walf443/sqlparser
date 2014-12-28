@@ -61,6 +61,10 @@ var keywords = map[string]int{
 	"CURRENT_TIMESTAMP": CURRENT_TIMESTAMP,
 	"ON": ON,
 	"UPDATE": UPDATE,
+	"PRIMARY": PRIMARY,
+	"USING": USING,
+	"HASH": HASH,
+	"BTREE": BTREE,
 
 	// datatypes
 	"BIT": BIT,

@@ -23,6 +23,7 @@ type Token struct {
     table_name TableNameIdentifier
     database_name DatabaseNameIdentifier
     column_name ColumnNameIdentifier
+    column_names []ColumnNameIdentifier
     index_name IndexNameIdentifier
     column_definition ColumnDefinition
     alter_specifications []AlterSpecification
@@ -44,6 +45,7 @@ type Token struct {
 %type<table_name> table_name
 %type<database_name> database_name
 %type<column_name> column_name
+%type<column_names> index_column_names
 %type<index_name> index_name
 %type<column_definition> column_definition
 %type<alter_specifications> alter_specifications
@@ -59,7 +61,8 @@ type Token struct {
 
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
-%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE
+%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE PRIMARY
+%token<tok> USING BTREE HASH
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
 %%
@@ -121,6 +124,28 @@ create_definition
     {
         $$ = &CreateDefinitionColumn{ColumnName: $1, ColumnDefinition: $2}
     }
+    | PRIMARY KEY skipable_index_type '(' index_column_names ')'
+    {
+        $$ = &CreateDefinitionPrimaryKey{Columns: $5}
+    }
+
+index_column_names
+    : column_name
+    {
+        result := []ColumnNameIdentifier{}
+        result = append(result, $1)
+        $$ = result
+    }
+    | index_column_names ',' column_name
+    {
+        result := append($1, $3)
+        $$ = result
+    }
+
+skipable_index_type
+    :
+    | USING BTREE
+    | USING HASH
 
 table_names
     : table_name

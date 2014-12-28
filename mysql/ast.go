@@ -145,9 +145,13 @@ type (
 		ColumnName ColumnNameIdentifier
 		ColumnDefinition ColumnDefinition
 	}
+	CreateDefinitionPrimaryKey struct {
+		Columns []ColumnNameIdentifier
+	}
 )
 
 func (x *CreateDefinitionColumn) create_definition() {}
+func (x *CreateDefinitionPrimaryKey) create_definition() {}
 
 type (
 	DefaultDefinitionString struct {
