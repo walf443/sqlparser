@@ -74,6 +74,8 @@ func TestParseColumnDefinition(t *testing.T) {
 	testColumnDefinition(t, "DATE", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_DATE }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "TIME", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIME }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIMESTAMP }, true, false, &DefaultDefinitionEmpty{}})
+	testColumnDefinition(t, "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIMESTAMP }, true, false, &DefaultDefinitionCurrentTimestamp{false}})
+	testColumnDefinition(t, "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_TIMESTAMP }, true, false, &DefaultDefinitionCurrentTimestamp{true}})
 	testColumnDefinition(t, "DATETIME", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_DATETIME }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "YEAR", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_YEAR }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "CHAR", ColumnDefinition{&DataTypeDefinitionString{ DATATYPE_CHAR, 0, "", "" }, true, false, &DefaultDefinitionEmpty{}})

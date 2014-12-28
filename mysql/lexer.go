@@ -58,6 +58,9 @@ var keywords = map[string]int{
 	"NOT": NOT,
 	"AUTO_INCREMENT": AUTO_INCREMENT,
 	"DEFAULT": DEFAULT,
+	"CURRENT_TIMESTAMP": CURRENT_TIMESTAMP,
+	"ON": ON,
+	"UPDATE": UPDATE,
 
 	// datatypes
 	"BIT": BIT,

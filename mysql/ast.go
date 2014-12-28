@@ -156,7 +156,12 @@ type (
 
 	DefaultDefinitionEmpty struct {
 	}
+
+	DefaultDefinitionCurrentTimestamp struct {
+		OnUpdate bool
+	}
 )
 
 func (x *DefaultDefinitionEmpty) default_definition() {}
 func (x *DefaultDefinitionString) default_definition() {}
+func (x *DefaultDefinitionCurrentTimestamp) default_definition() {}
