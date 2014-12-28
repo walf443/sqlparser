@@ -145,13 +145,25 @@ type (
 		ColumnName ColumnNameIdentifier
 		ColumnDefinition ColumnDefinition
 	}
-	CreateDefinitionPrimaryKey struct {
+	CreateDefinitionPrimaryIndex struct {
 		Columns []ColumnNameIdentifier
 	}
+
+	CreateDefinitionUniqueIndex struct {
+		Name IndexNameIdentifier
+		Columns []ColumnNameIdentifier
+	}
+	CreateDefinitionIndex struct {
+		Name IndexNameIdentifier
+		Columns []ColumnNameIdentifier
+	}
+
 )
 
 func (x *CreateDefinitionColumn) create_definition() {}
-func (x *CreateDefinitionPrimaryKey) create_definition() {}
+func (x *CreateDefinitionPrimaryIndex) create_definition() {}
+func (x *CreateDefinitionUniqueIndex) create_definition() {}
+func (x *CreateDefinitionIndex) create_definition() {}
 
 type (
 	DefaultDefinitionString struct {

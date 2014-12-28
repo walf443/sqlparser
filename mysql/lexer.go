@@ -62,6 +62,7 @@ var keywords = map[string]int{
 	"ON": ON,
 	"UPDATE": UPDATE,
 	"PRIMARY": PRIMARY,
+	"UNIQUE": UNIQUE,
 	"USING": USING,
 	"HASH": HASH,
 	"BTREE": BTREE,

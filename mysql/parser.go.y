@@ -46,7 +46,7 @@ type Token struct {
 %type<database_name> database_name
 %type<column_name> column_name
 %type<column_names> index_column_names
-%type<index_name> index_name
+%type<index_name> index_name skipable_index_name
 %type<column_definition> column_definition
 %type<alter_specifications> alter_specifications
 %type<alter_specification> alter_specification
@@ -61,7 +61,7 @@ type Token struct {
 
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
-%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE PRIMARY
+%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE PRIMARY UNIQUE
 %token<tok> USING BTREE HASH
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
@@ -126,7 +126,15 @@ create_definition
     }
     | PRIMARY KEY skipable_index_type '(' index_column_names ')'
     {
-        $$ = &CreateDefinitionPrimaryKey{Columns: $5}
+        $$ = &CreateDefinitionPrimaryIndex{Columns: $5}
+    }
+    | index_or_key skipable_index_name skipable_index_type '(' index_column_names ')'
+    {
+        $$ = &CreateDefinitionIndex{Name: $2, Columns: $5}
+    }
+    | UNIQUE index_or_key skipable_index_name skipable_index_type '(' index_column_names ')'
+    {
+        $$ = &CreateDefinitionUniqueIndex{Name: $3, Columns: $6}
     }
 
 index_column_names
@@ -518,6 +526,16 @@ column_name
     | '`' RAW '`'
     {
         $$ = ColumnNameIdentifier{Name: $2.lit}
+    }
+
+skipable_index_name
+    :
+    {
+        $$ = IndexNameIdentifier{Name: ""}
+    }
+    | index_name
+    {
+        $$ = $1
     }
 
 index_name

@@ -25,7 +25,7 @@ func TestParseCreateDatabaseStatement(t *testing.T) {
 func TestCreateTableStatement(t *testing.T) {
 	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL, PRIMARY KEY (id) )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
-		&CreateDefinitionPrimaryKey{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
+		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
 	}})
 	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
