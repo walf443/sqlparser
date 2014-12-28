@@ -1,6 +1,8 @@
 package mysql
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -102,6 +104,8 @@ type Scanner struct {
 	offset   int
 	lineHead int
 	line     int
+	markRawUntil []rune
+	nextLiteral string
 }
 
 func (s *Scanner) Init(src string) {
@@ -109,42 +113,80 @@ func (s *Scanner) Init(src string) {
 }
 
 func (s *Scanner) Scan() (tok int, lit string, pos Position) {
-	s.skipWhiteSpace()
-	pos = s.position()
-	switch ch := s.peek(); {
-	case isLetter(ch):
-		lit = s.scanIdentifier()
-		if keyword, ok := keywords[strings.ToUpper(lit)]; ok {
-			tok = keyword
-		} else {
-			tok = IDENT
+	if ( s.nextLiteral != "" ) {
+		switch s.nextLiteral {
+		case "*/":
+			tok = COMMENT_FINISH
 		}
-	case isNumber(ch):
-		lit = s.scanNumber()
-		tok = NUMBER
-	default:
-		switch ch {
-		case -1:
-			tok = EOF
-		case ';', ',', '`', '.', '(', ')':
-			tok = int(ch)
-			lit = string(ch)
+		pos = s.position()
+		for i := 0; i < len(s.nextLiteral); i++ {
+			s.next()
 		}
-		s.next()
+		lit = s.nextLiteral
+		s.nextLiteral = "";
+		return;
+	}
+	if len(s.markRawUntil) == 0 {
+		s.skipWhiteSpace()
+		pos = s.position()
+		switch ch := s.peek(); {
+		case ch == '/' && s.readAhead(1) == '*':
+			s.next()
+			tok = COMMENT_START
+			lit = "/*"
+			s.next()
+			s.markRawUntil = []rune{'*', '/'}
+		case isLetter(ch):
+			lit = s.scanIdentifier()
+			if keyword, ok := keywords[strings.ToUpper(lit)]; ok {
+				tok = keyword
+			} else {
+				tok = IDENT
+			}
+		case isNumber(ch):
+			lit = s.scanNumber()
+			tok = NUMBER
+		default:
+			switch ch {
+			case -1:
+				tok = EOF
+			case ';', ',', '`', '.', '(', ')':
+				tok = int(ch)
+				lit = string(ch)
+			}
+			s.next()
+		}
+	} else {
+		var err error
+		lit, err = s.scanUntil(s.markRawUntil)
+		if err != nil {
+			panic(err)
+		}
+		tok = RAW
+		s.nextLiteral = string(s.markRawUntil);
+		s.markRawUntil = []rune{}
 	}
 	return
 }
 
 func (s *Scanner) peek() rune {
-	if !s.reachEOF() {
+	if !s.reachEOF(0) {
 		return s.src[s.offset]
 	} else {
 		return -1
 	}
 }
 
+func (s *Scanner) readAhead(offset int) rune {
+	if !s.reachEOF(offset) {
+		return s.src[s.offset + offset]
+	} else {
+		return -1
+	}
+}
+
 func (s *Scanner) next() {
-	if !s.reachEOF() {
+	if !s.reachEOF(0) {
 		if s.peek() == '\n' {
 			s.lineHead = s.offset + 1
 			s.line++
@@ -183,8 +225,8 @@ func isWhiteSpace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
 }
 
-func (s *Scanner) reachEOF() bool {
-	return len(s.src) <= s.offset
+func (s *Scanner) reachEOF(offset int) bool {
+	return len(s.src) <= s.offset + offset
 }
 
 func (s *Scanner) position() Position {
@@ -205,6 +247,36 @@ func (s *Scanner) scanIdentifier() string {
 	}
 
 	return string(ret)
+}
+
+func (s *Scanner) scanUntil(finish []rune) (string, error) {
+	cursor := 0
+	finish_pos := len(finish) - 1
+	var ret []rune
+	for {
+		ch := s.peek()
+		if ch == finish[cursor] {
+			for {
+				cursor++
+				ch2 := s.readAhead(cursor)
+				if ch2 != finish[cursor] {
+					cursor = 0
+					break
+				}
+				if cursor == finish_pos {
+					return string(ret), nil
+				}
+				if ch2 == -1 {
+					return "", errors.New(fmt.Sprintf("unexpected EOF string. exptected \"%s\"", finish))
+				}
+			}
+		}
+
+		ret = append(ret, s.peek())
+		s.next()
+	}
+
+	return string(ret), nil
 }
 
 func (s *Scanner) scanNumber() string {

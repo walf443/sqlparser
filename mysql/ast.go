@@ -47,6 +47,10 @@ type (
 		TableName TableNameIdentifier
 		CreateDefinitions []CreateDefinition
 	}
+
+	CommentStatement struct {
+		Content string
+	}
 )
 
 func (x *DropTableStatement) statement() {}
@@ -54,6 +58,7 @@ func (x *DropDatabaseStatement) statement() {}
 func (x *CreateDatabaseStatement) statement() {}
 func (x *AlterTableStatement) statement() {}
 func (x *CreateTableStatement) statement() {}
+func (x *CommentStatement) statement() {}
 
 type (
 	TableNameIdentifier struct {

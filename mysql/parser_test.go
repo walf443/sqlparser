@@ -22,6 +22,12 @@ func TestParseCreateDatabaseStatement(t *testing.T) {
 	testStatement(t, "create database `hoge`", &CreateDatabaseStatement{DatabaseNameIdentifier{Name:"hoge"}})
 }
 
+func TestParseCommentStatement(t *testing.T) {
+	testStatement(t, "/* hoge */", &CommentStatement{" hoge "})
+	testStatement(t, "/* あいうえお */", &CommentStatement{" あいうえお "})
+	testStatement(t, "/* SELECT * FROM hoge; */", &CommentStatement{" SELECT * FROM hoge; "})
+}
+
 func TestCreateTableStatement(t *testing.T) {
 	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false}}}})
 	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{

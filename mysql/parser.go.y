@@ -55,7 +55,7 @@ type Token struct {
 %type<uint> length_option
 %type<fraction_option> fraction_option decimal_option
 
-%token<tok> IDENT NUMBER
+%token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
 %token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
@@ -98,6 +98,10 @@ statement
     | ALTER TABLE table_name alter_specifications ';'
     {
         $$ = &AlterTableStatement{TableName: $3, AlterSpecifications: $4}
+    }
+    | COMMENT_START RAW COMMENT_FINISH ';'
+    {
+        $$ = &CommentStatement{$2.lit}
     }
 
 create_definitions
