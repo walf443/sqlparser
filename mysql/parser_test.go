@@ -27,9 +27,12 @@ func TestCreateTableStatement(t *testing.T) {
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
 	}})
-	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
+	testStatement(t, "CREATE TABLE hoge ( id INT(10) UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY (id, name), UNIQUE INDEX name (name), INDEX (id) )", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionColumn{ColumnNameIdentifier{"name"}, ColumnDefinition{&DataTypeDefinitionString{DATATYPE_VARCHAR, 255, "", ""}, false, false, &DefaultDefinitionEmpty{}}},
+		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}, ColumnNameIdentifier{"name"}}},
+		&CreateDefinitionUniqueIndex{IndexNameIdentifier{"name"}, []ColumnNameIdentifier{ColumnNameIdentifier{"name"}}},
+		&CreateDefinitionIndex{IndexNameIdentifier{""}, []ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
 	}})
 }
 
