@@ -66,6 +66,22 @@ var keywords = map[string]int{
 	"USING":             USING,
 	"HASH":              HASH,
 	"BTREE":             BTREE,
+	"ENGINE":            ENGINE,
+	"CHARSET":           CHARSET,
+	"CHARACTER":         CHARACTER,
+	"SET":               SET,
+	"AVG_ROW_LENGTH":    AVG_ROW_LENGTH,
+	"CHECKSUM":          CHECKSUM,
+	"COMMENT":           COMMENT,
+	"KEY_BLOCK_SIZE":    KEY_BLOCK_SIZE,
+	"MAX_ROWS":          MAX_ROWS,
+	"MIN_ROWS":          MIN_ROWS,
+	"ROW_FORMAT":        ROW_FORMAT,
+	"DYNAMIC":           DYNAMIC,
+	"FIXED":             FIXED,
+	"COMPRESSED":        COMPRESSED,
+	"REDUNDANT":         REDUNDANT,
+	"COMPACT":           COMPACT,
 
 	// datatypes
 	"BIT":        BIT,
@@ -180,7 +196,7 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 			switch ch {
 			case -1:
 				tok = EOF
-			case ';', ',', '`', '.', '(', ')':
+			case ';', ',', '`', '.', '(', ')', '=':
 				tok = int(ch)
 				lit = string(ch)
 			}

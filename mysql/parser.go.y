@@ -62,7 +62,8 @@ type Token struct {
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
 %token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT CURRENT_TIMESTAMP ON UPDATE PRIMARY UNIQUE
-%token<tok> USING BTREE HASH
+%token<tok> USING BTREE HASH CHARSET CHARACTER SET
+%token<tok> ENGINE AVG_ROW_LENGTH CHECKSUM COMMENT KEY_BLOCK_SIZE MAX_ROWS MIN_ROWS ROW_FORMAT DYNAMIC FIXED COMPRESSED REDUNDANT COMPACT
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
 %%
@@ -96,7 +97,7 @@ statement
     {
         $$ = &CreateDatabaseStatement{DatabaseName: $3}
     }
-    | CREATE TABLE table_name '(' create_definitions ')' ';'
+    | CREATE TABLE table_name '(' create_definitions ')' skipable_table_options ';'
     {
         $$ = &CreateTableStatement{TableName: $3, CreateDefinitions: $5}
     }
@@ -137,6 +138,31 @@ create_definition
         $$ = &CreateDefinitionUniqueIndex{Name: $3, Columns: $6}
     }
 
+skipable_table_options
+ :
+ | skipable_table_options table_option
+
+table_option
+    :
+    | ENGINE skipable_equal storage_engine_name
+    | AUTO_INCREMENT skipable_equal NUMBER
+    | AVG_ROW_LENGTH skipable_equal NUMBER
+    | CHECKSUM skipable_equal NUMBER
+    | COMMENT skipable_equal '\'' RAW '\''
+    | KEY_BLOCK_SIZE skipable_equal NUMBER
+    | MAX_ROWS skipable_equal NUMBER
+    | MIN_ROWS skipable_equal NUMBER
+    | ROW_FORMAT skipable_equal row_format
+    | DEFAULT CHARSET skipable_equal storage_engine_name
+
+charset_or_character_set
+    : CHARSET
+    | CHARACTER SET
+
+skipable_equal
+    :
+    | '='
+
 index_column_names
     : column_name
     {
@@ -154,6 +180,14 @@ skipable_index_type
     :
     | USING BTREE
     | USING HASH
+
+row_format
+    : DEFAULT
+    | DYNAMIC
+    | FIXED
+    | COMPRESSED
+    | REDUNDANT
+    | COMPACT
 
 table_names
     : table_name
@@ -547,6 +581,15 @@ index_name
     {
         $$ = IndexNameIdentifier{Name: $2.lit}
     }
+
+storage_engine_name
+    : IDENT
+    | '\'' IDENT '\''
+    | '"' IDENT '\''
+
+skipable_default
+    :
+    | DEFAULT
 
 %%
 

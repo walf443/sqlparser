@@ -79,6 +79,10 @@ type (
 	IndexNameIdentifier struct {
 		Name string
 	}
+
+	EngineNameIdentifier struct {
+		Name string
+	}
 )
 
 func (x *TableNameIdentifier) identifier()    {}
