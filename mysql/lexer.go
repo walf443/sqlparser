@@ -57,6 +57,7 @@ var keywords = map[string]int{
 	"NULL": NULL,
 	"NOT": NOT,
 	"AUTO_INCREMENT": AUTO_INCREMENT,
+	"DEFAULT": DEFAULT,
 
 	// datatypes
 	"BIT": BIT,
@@ -119,6 +120,10 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 			tok = COMMENT_FINISH
 		case "`":
 			tok = int('`')
+		case "'":
+			tok = int('\'')
+		case "\"":
+			tok = int('"')
 		}
 		pos = s.position()
 		for i := 0; i < len(s.nextLiteral); i++ {
@@ -150,6 +155,16 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 			tok = NUMBER
 		case ch == '`':
 			s.markRawUntil = []rune{'`'}
+			tok = int(ch)
+			lit = string(ch)
+			s.next()
+		case ch == '\'':
+			s.markRawUntil = []rune{'\''}
+			tok = int(ch)
+			lit = string(ch)
+			s.next()
+		case ch == '"':
+			s.markRawUntil = []rune{'"'}
 			tok = int(ch)
 			lit = string(ch)
 			s.next()

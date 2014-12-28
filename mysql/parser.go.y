@@ -32,6 +32,7 @@ type Token struct {
     create_definition CreateDefinition
     bool bool
     data_type_type DataType
+    default_definition DefaultDefinition
     uint uint
     fraction_option [2]uint
     tok       Token
@@ -54,10 +55,11 @@ type Token struct {
 %type<bool> unsigned_option zerofill_option nullable autoincrement
 %type<uint> length_option
 %type<fraction_option> fraction_option decimal_option
+%type<default_definition> default
 
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
-%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT
+%token<tok> TABLE COLUMN DATABASE INDEX KEY NOT NULL AUTO_INCREMENT DEFAULT
 %token<tok> BIT TINYINT SMALLINT MEDIUMINT INT INTEGER BIGINT REAL DOUBLE FLOAT DECIMAL NUMERIC DATE TIME TIMESTAMP DATETIME YEAR CHAR VARCHAR BINARY VARBINARY TINYBLOB BLOB MEDIUMBLOB LONGBLOB TINYTEXT TEXT MEDIUMTEXT LONGTEXT UNSIGNED ZEROFILL
 
 %%
@@ -185,7 +187,7 @@ skipable_column
 column_definition
     : data_type nullable default autoincrement key_options column_comment
     {
-        $$ = ColumnDefinition{$1, $2, $4}
+        $$ = ColumnDefinition{$1, $2, $4, $3}
     }
 
 nullable
@@ -204,6 +206,27 @@ nullable
 
 default
     :
+    {
+        $$ = &DefaultDefinitionEmpty{}
+    }
+    | DEFAULT NUMBER
+    {
+        value := DefaultDefinitionString{}
+        value.Value = $2.lit
+        $$ = &value
+    }
+    | DEFAULT '"' RAW '"'
+    {
+        value := DefaultDefinitionString{}
+        value.Value = $3.lit
+        $$ = &value
+    }
+    | DEFAULT '\'' RAW '\''
+    {
+        value := DefaultDefinitionString{}
+        value.Value = $3.lit
+        $$ = &value
+    }
 
 autoincrement
     :

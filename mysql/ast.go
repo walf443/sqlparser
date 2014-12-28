@@ -17,6 +17,7 @@ type (
 		DataTypeDefinition DataTypeDefinition
 		Nullable bool
 		AutoIncrement bool
+		Default DefaultDefinition
 	}
 
 	DataTypeDefinition interface {
@@ -25,6 +26,10 @@ type (
 
 	CreateDefinition interface {
 		create_definition()
+	}
+
+	DefaultDefinition interface {
+		default_definition()
 	}
 )
 
@@ -143,3 +148,15 @@ type (
 )
 
 func (x *CreateDefinitionColumn) create_definition() {}
+
+type (
+	DefaultDefinitionString struct {
+		Value string
+	}
+
+	DefaultDefinitionEmpty struct {
+	}
+)
+
+func (x *DefaultDefinitionEmpty) default_definition() {}
+func (x *DefaultDefinitionString) default_definition() {}
