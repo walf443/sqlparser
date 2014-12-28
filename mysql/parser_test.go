@@ -61,6 +61,7 @@ func TestParseColumnDefinition(t *testing.T) {
 	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL NOT NULL DEFAULT 100 AUTO_INCREMENT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }, false, true, &DefaultDefinitionString{"100"}})
 	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL NOT NULL DEFAULT '100' AUTO_INCREMENT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }, false, true, &DefaultDefinitionString{"100"}})
 	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL NOT NULL DEFAULT \"100\" AUTO_INCREMENT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }, false, true, &DefaultDefinitionString{"100"}})
+	testColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 10, true, true }, true, false, &DefaultDefinitionNull{}})
 	testColumnDefinition(t, "INTEGER", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_INT, 0, false, false }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "BIGINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_BIGINT, 0, false, false }, true, false, &DefaultDefinitionEmpty{}})
 	testColumnDefinition(t, "REAL", ColumnDefinition{&DataTypeDefinitionFraction{ DATATYPE_REAL, 0, 0, false, false }, true, false, &DefaultDefinitionEmpty{}})

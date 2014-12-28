@@ -209,6 +209,10 @@ default
     {
         $$ = &DefaultDefinitionEmpty{}
     }
+    | DEFAULT NULL
+    {
+        $$ = &DefaultDefinitionNull{}
+    }
     | DEFAULT NUMBER
     {
         value := DefaultDefinitionString{}
