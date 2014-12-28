@@ -97,7 +97,7 @@ statement
     {
         $$ = &CreateDatabaseStatement{DatabaseName: $3}
     }
-    | CREATE TABLE table_name '(' create_definitions ')' skipable_table_options ';'
+    | CREATE TABLE table_name '(' create_definitions ')' skipable_table_options optional_statement_finish
     {
         $$ = &CreateTableStatement{TableName: $3, CreateDefinitions: $5}
     }
@@ -109,6 +109,10 @@ statement
     {
         $$ = &CommentStatement{$2.lit}
     }
+
+optional_statement_finish
+    :
+    | ';'
 
 create_definitions
     : create_definition
@@ -153,8 +157,8 @@ table_option
     | MAX_ROWS skipable_equal NUMBER
     | MIN_ROWS skipable_equal NUMBER
     | ROW_FORMAT skipable_equal row_format
-    | DEFAULT CHARSET skipable_equal storage_engine_name
-    | COLLATE skipable_equal storage_engine_name
+    | DEFAULT CHARSET skipable_equal string
+    | COLLATE skipable_equal string
 
 charset_or_character_set
     : CHARSET
@@ -308,6 +312,11 @@ default
         $$ = &DefaultDefinitionCurrentTimestamp{false}
     }
 
+string
+    : IDENT
+    | '\'' RAW '\''
+    | '"' RAW '"'
+
 autoincrement
     :
     {
@@ -323,6 +332,7 @@ key_options
 
 column_comment
     :
+    | COMMENT string
 
 data_type
     : BIT
@@ -363,11 +373,11 @@ data_type
     {
         $$ = &DataTypeDefinitionSimple{Type: DATATYPE_YEAR }
     }
-    | CHAR length_option
+    | CHAR length_option optional_character_set optional_collate
     {
         $$ = &DataTypeDefinitionString{Type: DATATYPE_CHAR, Length: $2 }
     }
-    | VARCHAR length_option
+    | VARCHAR length_option optional_character_set optional_collate
     {
         $$ = &DataTypeDefinitionString{Type: DATATYPE_VARCHAR, Length: $2 }
     }
@@ -496,6 +506,14 @@ fraction_option
         result[1] = uint(num2)
         $$ = result
     }
+
+optional_character_set
+    :
+    | CHARACTER SET string
+
+optional_collate
+    :
+    | COLLATE string
 
 decimal_option
     :
