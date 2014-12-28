@@ -1,5 +1,9 @@
 package mysql
 
+import (
+	"strings"
+)
+
 const (
 	EOF     = -1
 	UNKNOWN = 0
@@ -41,21 +45,13 @@ const (
 var keywords = map[string]int{
 	"ADD": ADD,
 	"DROP": DROP,
-	"drop": DROP,
 	"CREATE": CREATE,
-	"create": CREATE,
 	"ALTER": ALTER,
-	"alter": ALTER,
 	"COLUMN": COLUMN,
-	"column": COLUMN,
 	"TABLE": TABLE,
-	"table": TABLE,
 	"INDEX": INDEX,
-	"index": INDEX,
 	"KEY": KEY,
-	"key": KEY,
 	"DATABASE": DATABASE,
-	"database": DATABASE,
 	"NULL": NULL,
 	"NOT": NOT,
 	"AUTO_INCREMENT": AUTO_INCREMENT,
@@ -118,7 +114,7 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 	switch ch := s.peek(); {
 	case isLetter(ch):
 		lit = s.scanIdentifier()
-		if keyword, ok := keywords[lit]; ok {
+		if keyword, ok := keywords[strings.ToUpper(lit)]; ok {
 			tok = keyword
 		} else {
 			tok = IDENT

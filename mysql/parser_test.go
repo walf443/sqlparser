@@ -45,6 +45,7 @@ func TestParseAlterTableStatement(t *testing.T) {
 
 func TestParseColumnDefinition(t *testing.T) {
 	testColumnDefinition(t, "BIT", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BIT }, true, false})
+	testColumnDefinition(t, "bit", ColumnDefinition{&DataTypeDefinitionSimple{ DATATYPE_BIT }, true, false})
 	testColumnDefinition(t, "TINYINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_TINYINT, 0, false, false }, true, false})
 	testColumnDefinition(t, "SMALLINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_SMALLINT, 0, false, false }, true, false})
 	testColumnDefinition(t, "MEDIUMINT", ColumnDefinition{&DataTypeDefinitionNumber{ DATATYPE_MEDIUMINT, 0, false, false }, true, false})
