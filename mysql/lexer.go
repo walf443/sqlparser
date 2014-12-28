@@ -45,58 +45,58 @@ const (
 )
 
 var keywords = map[string]int{
-	"ADD": ADD,
-	"DROP": DROP,
-	"CREATE": CREATE,
-	"ALTER": ALTER,
-	"COLUMN": COLUMN,
-	"TABLE": TABLE,
-	"INDEX": INDEX,
-	"KEY": KEY,
-	"DATABASE": DATABASE,
-	"NULL": NULL,
-	"NOT": NOT,
-	"AUTO_INCREMENT": AUTO_INCREMENT,
-	"DEFAULT": DEFAULT,
+	"ADD":               ADD,
+	"DROP":              DROP,
+	"CREATE":            CREATE,
+	"ALTER":             ALTER,
+	"COLUMN":            COLUMN,
+	"TABLE":             TABLE,
+	"INDEX":             INDEX,
+	"KEY":               KEY,
+	"DATABASE":          DATABASE,
+	"NULL":              NULL,
+	"NOT":               NOT,
+	"AUTO_INCREMENT":    AUTO_INCREMENT,
+	"DEFAULT":           DEFAULT,
 	"CURRENT_TIMESTAMP": CURRENT_TIMESTAMP,
-	"ON": ON,
-	"UPDATE": UPDATE,
-	"PRIMARY": PRIMARY,
-	"UNIQUE": UNIQUE,
-	"USING": USING,
-	"HASH": HASH,
-	"BTREE": BTREE,
+	"ON":                ON,
+	"UPDATE":            UPDATE,
+	"PRIMARY":           PRIMARY,
+	"UNIQUE":            UNIQUE,
+	"USING":             USING,
+	"HASH":              HASH,
+	"BTREE":             BTREE,
 
 	// datatypes
-	"BIT": BIT,
-	"TINYINT": TINYINT,
-	"SMALLINT": SMALLINT,
-	"MEDIUMINT": MEDIUMINT,
-	"INT": INT,
-	"INTEGER": INTEGER,
-	"BIGINT": BIGINT,
-	"REAL": REAL,
-	"DOUBLE": DOUBLE,
-	"FLOAT": FLOAT,
-	"DECIMAL": DECIMAL,
-	"NUMERIC": NUMERIC,
-	"DATE": DATE,
-	"TIME": TIME,
-	"TIMESTAMP": TIMESTAMP,
-	"DATETIME": DATETIME,
-	"YEAR": YEAR,
-	"CHAR": CHAR,
-	"VARCHAR": VARCHAR,
-	"BINARY": BINARY,
-	"VARBINARY": VARBINARY,
-	"TINYBLOB": TINYBLOB,
-	"BLOB": BLOB,
+	"BIT":        BIT,
+	"TINYINT":    TINYINT,
+	"SMALLINT":   SMALLINT,
+	"MEDIUMINT":  MEDIUMINT,
+	"INT":        INT,
+	"INTEGER":    INTEGER,
+	"BIGINT":     BIGINT,
+	"REAL":       REAL,
+	"DOUBLE":     DOUBLE,
+	"FLOAT":      FLOAT,
+	"DECIMAL":    DECIMAL,
+	"NUMERIC":    NUMERIC,
+	"DATE":       DATE,
+	"TIME":       TIME,
+	"TIMESTAMP":  TIMESTAMP,
+	"DATETIME":   DATETIME,
+	"YEAR":       YEAR,
+	"CHAR":       CHAR,
+	"VARCHAR":    VARCHAR,
+	"BINARY":     BINARY,
+	"VARBINARY":  VARBINARY,
+	"TINYBLOB":   TINYBLOB,
+	"BLOB":       BLOB,
 	"MEDIUMBLOB": MEDIUMBLOB,
-	"LONGBLOB": LONGBLOB,
-	"TINYTEXT": TINYTEXT,
-	"TEXT": TEXT,
+	"LONGBLOB":   LONGBLOB,
+	"TINYTEXT":   TINYTEXT,
+	"TEXT":       TEXT,
 	"MEDIUMTEXT": MEDIUMTEXT,
-	"LONGTEXT": LONGTEXT,
+	"LONGTEXT":   LONGTEXT,
 
 	// datatype options
 	"UNSIGNED": UNSIGNED,
@@ -109,12 +109,12 @@ type Position struct {
 }
 
 type Scanner struct {
-	src      []rune
-	offset   int
-	lineHead int
-	line     int
+	src          []rune
+	offset       int
+	lineHead     int
+	line         int
 	markRawUntil []rune
-	nextLiteral string
+	nextLiteral  string
 }
 
 func (s *Scanner) Init(src string) {
@@ -122,7 +122,7 @@ func (s *Scanner) Init(src string) {
 }
 
 func (s *Scanner) Scan() (tok int, lit string, pos Position) {
-	if ( s.nextLiteral != "" ) {
+	if s.nextLiteral != "" {
 		switch s.nextLiteral {
 		case "*/":
 			tok = COMMENT_FINISH
@@ -138,8 +138,8 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 			s.next()
 		}
 		lit = s.nextLiteral
-		s.nextLiteral = "";
-		return;
+		s.nextLiteral = ""
+		return
 	}
 	if len(s.markRawUntil) == 0 {
 		s.skipWhiteSpace()
@@ -193,7 +193,7 @@ func (s *Scanner) Scan() (tok int, lit string, pos Position) {
 			panic(err)
 		}
 		tok = RAW
-		s.nextLiteral = string(s.markRawUntil);
+		s.nextLiteral = string(s.markRawUntil)
 		s.markRawUntil = []rune{}
 	}
 	return
@@ -209,7 +209,7 @@ func (s *Scanner) peek() rune {
 
 func (s *Scanner) readAhead(offset int) rune {
 	if !s.reachEOF(offset) {
-		return s.src[s.offset + offset]
+		return s.src[s.offset+offset]
 	} else {
 		return -1
 	}
@@ -229,7 +229,7 @@ func (s *Scanner) CurrentLine() string {
 	cursor := s.lineHead
 	var bytes []rune
 	for {
-		ch :=  s.src[cursor]
+		ch := s.src[cursor]
 
 		if ch == '\n' {
 			break
@@ -244,11 +244,11 @@ func (s *Scanner) CurrentLine() string {
 }
 
 func isLetter(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
 func isNumber(ch rune) bool {
-	return '0' <= ch && ch <= '9';
+	return '0' <= ch && ch <= '9'
 }
 
 func isWhiteSpace(ch rune) bool {
@@ -256,7 +256,7 @@ func isWhiteSpace(ch rune) bool {
 }
 
 func (s *Scanner) reachEOF(offset int) bool {
-	return len(s.src) <= s.offset + offset
+	return len(s.src) <= s.offset+offset
 }
 
 func (s *Scanner) position() Position {
