@@ -4,8 +4,8 @@ package mysql
 
 import (
     "fmt"
-    "os"
     "strconv"
+    "errors"
 )
 
 type Token struct {
@@ -631,19 +631,22 @@ func (l *LexerWrapper) Lex(lval *yySymType) int {
 }
 
 func (l *LexerWrapper) Error(e string) {
-    fmt.Printf("%s while processing near %q line %d, col: %d\n", e, l.recentLit, l.recentPos.Line, l.recentPos.Column)
-    fmt.Printf("%s\n", l.scanner.CurrentLine())
-    for i := 0; i < l.recentPos.Column-1; i++ {
-        fmt.Printf(" ")
-    }
-    fmt.Printf("^\n")
-    os.Exit(1)
 }
 
-func Parse(s *Scanner) []Statement {
+func (l *LexerWrapper) GetError(e string) error {
+    result := fmt.Sprintf("%s while processing near %q line %d, col: %d\n", e, l.recentLit, l.recentPos.Line, l.recentPos.Column)
+    result += fmt.Sprintf("%s\n", l.scanner.CurrentLine())
+    for i := 0; i < l.recentPos.Column-1; i++ {
+        result += fmt.Sprintf(" ")
+    }
+    result += fmt.Sprintf("^\n")
+    return errors.New(result)
+}
+
+func Parse(s *Scanner) ([]Statement, error) {
     l := LexerWrapper{scanner: s}
     if yyParse(&l) != 0 {
-        panic("Parse error")
+        return []Statement{}, l.GetError("syntax error")
     }
-    return l.statements
+    return l.statements, nil
 }

@@ -104,7 +104,11 @@ func TestParseColumnDefinition(t *testing.T) {
 func testStatement(t *testing.T, src string, expect interface{}) {
 	s := new(Scanner)
 	s.Init(src + ";")
-	statements := Parse(s)
+	statements, err := Parse(s)
+	if err != nil {
+		t.Errorf("Parse failed %s", err)
+		return
+	}
 	if len(statements) != 1 {
 		t.Errorf("Expect %q to be parsed, but %+#v", src, statements)
 		return
@@ -118,7 +122,11 @@ func testStatement(t *testing.T, src string, expect interface{}) {
 func testColumnDefinition(t *testing.T, src string, expect interface{}) {
 	s := new(Scanner)
 	s.Init("ALTER TABLE hoge ADD COLUMN fuga " + src + ";")
-	statements := Parse(s)
+	statements, err := Parse(s)
+	if err != nil {
+		t.Errorf("Parse failed %s", err)
+		return
+	}
 	if len(statements) != 1 {
 		t.Errorf("Expect %q to be parsed, but %+#v", src, statements)
 		return
