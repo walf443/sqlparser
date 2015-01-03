@@ -1,8 +1,14 @@
 package mysql
 
+import (
+	"fmt"
+	"strings"
+)
+
 type (
 	Statement interface {
 		statement()
+		ToQuery() string
 	}
 
 	Identifier interface {
@@ -59,11 +65,34 @@ type (
 )
 
 func (x *DropTableStatement) statement()      {}
+func (x *DropTableStatement) ToQuery() string {
+	var tableNames []string
+	for _,table := range x.TableNames {
+		tableNames = append(tableNames, table.ToQuery())
+	}
+	return "DROP TABLE " + strings.Join(tableNames, ", ")
+}
+
 func (x *DropDatabaseStatement) statement()   {}
+func (x *DropDatabaseStatement) ToQuery() string {
+	return "TODO"
+}
 func (x *CreateDatabaseStatement) statement() {}
+func (x *CreateDatabaseStatement) ToQuery() string {
+	return "TODO"
+}
 func (x *AlterTableStatement) statement()     {}
+func (x *AlterTableStatement) ToQuery() string {
+	return "TODO"
+}
 func (x *CreateTableStatement) statement()    {}
+func (x *CreateTableStatement) ToQuery() string {
+	return "TODO"
+}
 func (x *CommentStatement) statement()        {}
+func (x *CommentStatement) ToQuery() string {
+	return "TODO"
+}
 
 type (
 	TableNameIdentifier struct {
@@ -86,6 +115,15 @@ type (
 )
 
 func (x *TableNameIdentifier) identifier()    {}
+
+func (x *TableNameIdentifier) ToQuery() string {
+	if x.Database == "" {
+		return "`" + x.Name + "`"
+	} else {
+		return fmt.Sprintf("`%s`.`%s`", x.Database, x.Name)
+	}
+}
+
 func (x *DatabaseNameIdentifier) identifier() {}
 func (x *ColumnNameIdentifier) identifier()   {}
 func (x *IndexNameIdentifier) identifier()    {}
