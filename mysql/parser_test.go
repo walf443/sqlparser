@@ -41,7 +41,10 @@ func TestParseAlterTableStatement(t *testing.T) {
 	testStatement(t, "alter table `hoge`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, nil})
 
 	testStatement(t, "alter table `hoge` DROP COLUMN fuga", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "fuga"}}}})
-	testStatement(t, "alter table `hoge` DROP `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "fuga"}}}})
+	testStatement(t, "alter table `hoge` DROP `fuga`, DROP `bar`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{
+		&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "fuga"}},
+		&AlterSpecificationDropColumn{ColumnNameIdentifier{Name: "bar"}},
+	}})
 
 	testStatement(t, "alter table `hoge` DROP KEY `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}}})
 	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}}})

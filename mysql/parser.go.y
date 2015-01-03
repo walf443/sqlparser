@@ -233,9 +233,13 @@ alter_specifications
     {
         $$ = nil
     }
-    | alter_specifications alter_specification
+    | alter_specification
     {
-        $$ = append([]AlterSpecification{$2}, $1...)
+        $$ = []AlterSpecification{$1}
+    }
+    | alter_specifications ',' alter_specification
+    {
+        $$ = append($1, $3)
     }
 
 alter_specification
