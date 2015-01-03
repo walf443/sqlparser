@@ -65,16 +65,16 @@ type (
 	}
 )
 
-func (x *DropTableStatement) statement()      {}
+func (x *DropTableStatement) statement() {}
 func (x *DropTableStatement) ToQuery() string {
 	var tableNames []string
-	for _,table := range x.TableNames {
+	for _, table := range x.TableNames {
 		tableNames = append(tableNames, table.ToQuery())
 	}
 	return "DROP TABLE " + strings.Join(tableNames, ", ")
 }
 
-func (x *DropDatabaseStatement) statement()   {}
+func (x *DropDatabaseStatement) statement() {}
 func (x *DropDatabaseStatement) ToQuery() string {
 	return "DROP DATABASE " + x.DatabaseName.ToQuery()
 }
@@ -83,19 +83,19 @@ func (x *CreateDatabaseStatement) ToQuery() string {
 	return "CREATE DATABASE " + x.DatabaseName.ToQuery()
 }
 
-func (x *AlterTableStatement) statement()     {}
+func (x *AlterTableStatement) statement() {}
 func (x *AlterTableStatement) ToQuery() string {
 	var specQueries []string
-	for _,spec := range x.AlterSpecifications {
+	for _, spec := range x.AlterSpecifications {
 		specQueries = append(specQueries, spec.ToQuery())
 	}
 	return "ALTER TABLE " + x.TableName.ToQuery() + " " + strings.Join(specQueries, ", ")
 }
-func (x *CreateTableStatement) statement()    {}
+func (x *CreateTableStatement) statement() {}
 func (x *CreateTableStatement) ToQuery() string {
 	return "TODO"
 }
-func (x *CommentStatement) statement()        {}
+func (x *CommentStatement) statement() {}
 func (x *CommentStatement) ToQuery() string {
 	return "TODO"
 }
@@ -120,7 +120,7 @@ type (
 	}
 )
 
-func (x *TableNameIdentifier) identifier()    {}
+func (x *TableNameIdentifier) identifier() {}
 
 func (x *TableNameIdentifier) ToQuery() string {
 	if x.Database == "" {
@@ -134,12 +134,12 @@ func (x *DatabaseNameIdentifier) identifier() {}
 func (x *DatabaseNameIdentifier) ToQuery() string {
 	return "`" + x.Name + "`"
 }
-func (x *ColumnNameIdentifier) identifier()   {}
+func (x *ColumnNameIdentifier) identifier() {}
 func (x *ColumnNameIdentifier) ToQuery() string {
 	return "`" + x.Name + "`"
 }
 
-func (x *IndexNameIdentifier) identifier()    {}
+func (x *IndexNameIdentifier) identifier() {}
 func (x *IndexNameIdentifier) ToQuery() string {
 	return "`" + x.Name + "`"
 }
@@ -159,14 +159,14 @@ type (
 
 func (x *AlterSpecificationDropColumn) alterspecification() {}
 func (x *AlterSpecificationDropColumn) ToQuery() string {
-	return "DROP " + x.ColumnName.ToQuery();
+	return "DROP " + x.ColumnName.ToQuery()
 }
 
-func (x *AlterSpecificationDropIndex) alterspecification()  {}
+func (x *AlterSpecificationDropIndex) alterspecification() {}
 func (x *AlterSpecificationDropIndex) ToQuery() string {
-	return "DROP INDEX " + x.IndexName.ToQuery();
+	return "DROP INDEX " + x.IndexName.ToQuery()
 }
-func (x *AlterSpecificationAddColumn) alterspecification()  {}
+func (x *AlterSpecificationAddColumn) alterspecification() {}
 func (x *AlterSpecificationAddColumn) ToQuery() string {
 	return "TODO"
 }
