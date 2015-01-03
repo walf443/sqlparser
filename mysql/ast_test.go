@@ -11,6 +11,14 @@ func TestGenDropTableStatement(t *testing.T) {
 	testGenStatement(t, "DROP TABLE `hoge`.`fuga`", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name: "fuga"}}})
 }
 
+func TestGenDropDatabaseStatement(t *testing.T) {
+	testGenStatement(t, "DROP DATABASE `hoge`", &DropDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
+}
+
+func TestGenCreateDatabaseStatement(t *testing.T) {
+	testGenStatement(t, "CREATE DATABASE `hoge`", &CreateDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
+}
+
 func testGenStatement(t *testing.T, expected string, input Statement) {
 	result := input.ToQuery()
 	if result != expected {

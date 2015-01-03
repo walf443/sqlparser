@@ -75,11 +75,11 @@ func (x *DropTableStatement) ToQuery() string {
 
 func (x *DropDatabaseStatement) statement()   {}
 func (x *DropDatabaseStatement) ToQuery() string {
-	return "TODO"
+	return "DROP DATABASE " + x.DatabaseName.ToQuery()
 }
 func (x *CreateDatabaseStatement) statement() {}
 func (x *CreateDatabaseStatement) ToQuery() string {
-	return "TODO"
+	return "CREATE DATABASE " + x.DatabaseName.ToQuery()
 }
 func (x *AlterTableStatement) statement()     {}
 func (x *AlterTableStatement) ToQuery() string {
@@ -125,6 +125,9 @@ func (x *TableNameIdentifier) ToQuery() string {
 }
 
 func (x *DatabaseNameIdentifier) identifier() {}
+func (x *DatabaseNameIdentifier) ToQuery() string {
+	return "`" + x.Name + "`"
+}
 func (x *ColumnNameIdentifier) identifier()   {}
 func (x *IndexNameIdentifier) identifier()    {}
 
