@@ -300,7 +300,7 @@ func (x *DefaultDefinitionNull) ToQuery() string {
 }
 func (x *DefaultDefinitionString) default_definition() {}
 func (x *DefaultDefinitionString) ToQuery() string {
-	return "TODO"
+	return "DEFAULT \"" + x.Value + "\""
 }
 func (x *DefaultDefinitionCurrentTimestamp) default_definition() {}
 func (x *DefaultDefinitionCurrentTimestamp) ToQuery() string {
