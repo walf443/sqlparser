@@ -29,6 +29,7 @@ type (
 
 	DataTypeDefinition interface {
 		data_type_definition()
+		ToQuery() string
 	}
 
 	CreateDefinition interface {
@@ -37,6 +38,7 @@ type (
 
 	DefaultDefinition interface {
 		default_definition()
+		ToQuery() string
 	}
 )
 
@@ -168,7 +170,21 @@ func (x *AlterSpecificationDropIndex) ToQuery() string {
 }
 func (x *AlterSpecificationAddColumn) alterspecification() {}
 func (x *AlterSpecificationAddColumn) ToQuery() string {
-	return "TODO"
+	return "ADD " + x.ColumnName.ToQuery() + " " + x.ColumnDefinition.ToQuery()
+}
+
+func (x ColumnDefinition) ToQuery() string {
+	result := ""
+	result += x.DataTypeDefinition.ToQuery()
+	if !x.Nullable {
+		result += " NOT NULL"
+	}
+	if x.AutoIncrement {
+		result += " AUTO_INCREMENT"
+	}
+	result += " " + x.Default.ToQuery()
+
+	return result
 }
 
 type (
@@ -202,11 +218,37 @@ type (
 	}
 )
 
-func (x *DataTypeDefinitionSimple) data_type_definition()   {}
-func (x *DataTypeDefinitionNumber) data_type_definition()   {}
+func (x *DataTypeDefinitionSimple) data_type_definition() {}
+func (x *DataTypeDefinitionSimple) ToQuery() string {
+	return x.Type.String()
+}
+func (x *DataTypeDefinitionNumber) data_type_definition() {}
+func (x *DataTypeDefinitionNumber) ToQuery() string {
+	result := x.Type.String()
+	if x.Length != 0 {
+		result += fmt.Sprintf("(%d)", x.Length)
+	}
+	if x.Unsigned {
+		result += " UNSIGNED"
+	}
+	if x.Zerofill {
+		result += " ZEROFILL"
+	}
+	return result
+}
+
 func (x *DataTypeDefinitionFraction) data_type_definition() {}
-func (x *DataTypeDefinitionString) data_type_definition()   {}
+func (x *DataTypeDefinitionFraction) ToQuery() string {
+	return "TODO"
+}
+func (x *DataTypeDefinitionString) data_type_definition() {}
+func (x *DataTypeDefinitionString) ToQuery() string {
+	return "TODO"
+}
 func (x *DataTypeDefinitionTextBlob) data_type_definition() {}
+func (x *DataTypeDefinitionTextBlob) ToQuery() string {
+	return "TODO"
+}
 
 type (
 	CreateDefinitionColumn struct {
@@ -248,7 +290,19 @@ type (
 	}
 )
 
-func (x *DefaultDefinitionEmpty) default_definition()            {}
-func (x *DefaultDefinitionNull) default_definition()             {}
-func (x *DefaultDefinitionString) default_definition()           {}
+func (x *DefaultDefinitionEmpty) default_definition() {}
+func (x *DefaultDefinitionEmpty) ToQuery() string {
+	return ""
+}
+func (x *DefaultDefinitionNull) default_definition() {}
+func (x *DefaultDefinitionNull) ToQuery() string {
+	return "DEFAULT NULL"
+}
+func (x *DefaultDefinitionString) default_definition() {}
+func (x *DefaultDefinitionString) ToQuery() string {
+	return "TODO"
+}
 func (x *DefaultDefinitionCurrentTimestamp) default_definition() {}
+func (x *DefaultDefinitionCurrentTimestamp) ToQuery() string {
+	return "TODO"
+}

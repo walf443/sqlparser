@@ -26,6 +26,14 @@ func TestGenAlterStatement(t *testing.T) {
 	testGenStatement(t, "ALTER TABLE `hoge` DROP INDEX `foo`", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationDropIndex{IndexNameIdentifier{"foo"}},
 	}})
+	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` INT(10) UNSIGNED DEFAULT NULL", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationAddColumn{ColumnNameIdentifier{"foo"}, ColumnDefinition{
+			&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false},
+			true,
+			false,
+			&DefaultDefinitionNull{},
+		}},
+	}})
 }
 
 func testGenStatement(t *testing.T, expected string, input Statement) {
