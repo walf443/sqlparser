@@ -36,9 +36,26 @@ func TestGenAlterStatement(t *testing.T) {
 	}})
 }
 
+func TestGenColumnDefinition(t *testing.T) {
+	testGenColumnDefinition(t, "INT DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}, true, false, &DefaultDefinitionNull{}})
+	testGenColumnDefinition(t, "INT(10) UNSIGNED DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, true, false, &DefaultDefinitionNull{}})
+	testGenColumnDefinition(t, "INT(10) UNSIGNED ZEROFILL DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, true}, true, false, &DefaultDefinitionNull{}})
+	testGenColumnDefinition(t, "DATE ", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionEmpty{}})
+	testGenColumnDefinition(t, "DATE DEFAULT CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionCurrentTimestamp{}})
+	testGenColumnDefinition(t, "DATE DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionCurrentTimestamp{true}})
+}
+
 func testGenStatement(t *testing.T, expected string, input Statement) {
 	result := input.ToQuery()
 	if result != expected {
 		t.Errorf("Failed test to generage SQL\n\tInput: %+#v \n\tExpect\t: \"%s\"\n\tBut Got\t: \"%s\"", input, expected, result)
 	}
+}
+
+func testGenColumnDefinition(t *testing.T, expected string, input ColumnDefinition) {
+	specAddColumn := AlterSpecificationAddColumn{ColumnNameIdentifier{"foo"}, ColumnDefinition{}}
+	specAddColumn.ColumnDefinition = input
+	statement := AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{}}
+	statement.AlterSpecifications = append(statement.AlterSpecifications, &specAddColumn)
+	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` "+expected, &statement)
 }

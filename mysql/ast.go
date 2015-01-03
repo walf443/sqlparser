@@ -304,5 +304,9 @@ func (x *DefaultDefinitionString) ToQuery() string {
 }
 func (x *DefaultDefinitionCurrentTimestamp) default_definition() {}
 func (x *DefaultDefinitionCurrentTimestamp) ToQuery() string {
-	return "TODO"
+	if x.OnUpdate {
+		return "DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+	} else {
+		return "DEFAULT CURRENT_TIMESTAMP"
+	}
 }
