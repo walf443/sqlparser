@@ -19,6 +19,15 @@ func TestGenCreateDatabaseStatement(t *testing.T) {
 	testGenStatement(t, "CREATE DATABASE `hoge`", &CreateDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
 }
 
+func TestGenAlterStatement(t *testing.T) {
+	testGenStatement(t, "ALTER TABLE `hoge` DROP `foo`", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationDropColumn{ColumnNameIdentifier{"foo"}},
+	}})
+	testGenStatement(t, "ALTER TABLE `hoge` DROP INDEX `foo`", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationDropIndex{IndexNameIdentifier{"foo"}},
+	}})
+}
+
 func testGenStatement(t *testing.T, expected string, input Statement) {
 	result := input.ToQuery()
 	if result != expected {

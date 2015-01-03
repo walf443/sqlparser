@@ -17,6 +17,7 @@ type (
 
 	AlterSpecification interface {
 		alterspecification()
+		ToQuery() string
 	}
 
 	ColumnDefinition struct {
@@ -81,9 +82,14 @@ func (x *CreateDatabaseStatement) statement() {}
 func (x *CreateDatabaseStatement) ToQuery() string {
 	return "CREATE DATABASE " + x.DatabaseName.ToQuery()
 }
+
 func (x *AlterTableStatement) statement()     {}
 func (x *AlterTableStatement) ToQuery() string {
-	return "TODO"
+	var specQueries []string
+	for _,spec := range x.AlterSpecifications {
+		specQueries = append(specQueries, spec.ToQuery())
+	}
+	return "ALTER TABLE " + x.TableName.ToQuery() + " " + strings.Join(specQueries, ", ")
 }
 func (x *CreateTableStatement) statement()    {}
 func (x *CreateTableStatement) ToQuery() string {
@@ -129,7 +135,14 @@ func (x *DatabaseNameIdentifier) ToQuery() string {
 	return "`" + x.Name + "`"
 }
 func (x *ColumnNameIdentifier) identifier()   {}
+func (x *ColumnNameIdentifier) ToQuery() string {
+	return "`" + x.Name + "`"
+}
+
 func (x *IndexNameIdentifier) identifier()    {}
+func (x *IndexNameIdentifier) ToQuery() string {
+	return "`" + x.Name + "`"
+}
 
 type (
 	AlterSpecificationDropColumn struct {
@@ -145,8 +158,18 @@ type (
 )
 
 func (x *AlterSpecificationDropColumn) alterspecification() {}
+func (x *AlterSpecificationDropColumn) ToQuery() string {
+	return "DROP " + x.ColumnName.ToQuery();
+}
+
 func (x *AlterSpecificationDropIndex) alterspecification()  {}
+func (x *AlterSpecificationDropIndex) ToQuery() string {
+	return "DROP INDEX " + x.IndexName.ToQuery();
+}
 func (x *AlterSpecificationAddColumn) alterspecification()  {}
+func (x *AlterSpecificationAddColumn) ToQuery() string {
+	return "TODO"
+}
 
 type (
 	DataTypeDefinitionSimple struct {
