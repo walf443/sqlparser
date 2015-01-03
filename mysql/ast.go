@@ -272,7 +272,17 @@ func (x *DataTypeDefinitionString) ToQuery() string {
 
 func (x *DataTypeDefinitionTextBlob) data_type_definition() {}
 func (x *DataTypeDefinitionTextBlob) ToQuery() string {
-	return "TODO"
+	result := x.Type.String()
+	if x.Binary {
+		result += " BINARY"
+	}
+	if x.CharsetName != "" {
+		result += fmt.Sprintf(" CHARACTER SET %s", x.CharsetName)
+	}
+	if x.CollationName != "" {
+		result += fmt.Sprintf(" COLLATE %s", x.CollationName)
+	}
+	return result
 }
 
 type (

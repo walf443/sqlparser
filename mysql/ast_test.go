@@ -52,6 +52,9 @@ func TestGenColumnDefinition(t *testing.T) {
 	testGenColumnDefinition(t, "VARCHAR(255) DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionString{DATATYPE_VARCHAR, 255, "", ""}, true, false, &DefaultDefinitionNull{}})
 	testGenColumnDefinition(t, "VARCHAR(255) CHARACTER SET utf8mb4 DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionString{DATATYPE_VARCHAR, 255, "utf8mb4", ""}, true, false, &DefaultDefinitionNull{}})
 	testGenColumnDefinition(t, "VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionString{DATATYPE_VARCHAR, 255, "", "utf8mb4_general_ci"}, true, false, &DefaultDefinitionNull{}})
+
+	testGenColumnDefinition(t, "TEXT CHARACTER SET utf8mb4 ", ColumnDefinition{&DataTypeDefinitionTextBlob{DATATYPE_TEXT, false, "utf8mb4", ""}, true, false, &DefaultDefinitionEmpty{}})
+	testGenColumnDefinition(t, "TEXT BINARY COLLATE utf8mb4_general_ci ", ColumnDefinition{&DataTypeDefinitionTextBlob{DATATYPE_TEXT, true, "", "utf8mb4_general_ci"}, true, false, &DefaultDefinitionEmpty{}})
 }
 
 func testGenStatement(t *testing.T, expected string, input Statement) {
