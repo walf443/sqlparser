@@ -257,8 +257,19 @@ func (x *DataTypeDefinitionFraction) ToQuery() string {
 }
 func (x *DataTypeDefinitionString) data_type_definition() {}
 func (x *DataTypeDefinitionString) ToQuery() string {
-	return "TODO"
+	result := x.Type.String()
+	if x.Length > 0 {
+		result += fmt.Sprintf("(%d)", x.Length)
+	}
+	if x.CharsetName != "" {
+		result += fmt.Sprintf(" CHARACTER SET %s", x.CharsetName)
+	}
+	if x.CollationName != "" {
+		result += fmt.Sprintf(" COLLATE %s", x.CollationName)
+	}
+	return result
 }
+
 func (x *DataTypeDefinitionTextBlob) data_type_definition() {}
 func (x *DataTypeDefinitionTextBlob) ToQuery() string {
 	return "TODO"
