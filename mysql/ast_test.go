@@ -44,6 +44,10 @@ func TestGenColumnDefinition(t *testing.T) {
 	testGenColumnDefinition(t, "DATE DEFAULT \"2015/01/04\"", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionString{"2015/01/04"}})
 	testGenColumnDefinition(t, "DATE DEFAULT CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionCurrentTimestamp{}})
 	testGenColumnDefinition(t, "DATE DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", ColumnDefinition{&DataTypeDefinitionSimple{DATATYPE_DATE}, true, false, &DefaultDefinitionCurrentTimestamp{true}})
+
+	testGenColumnDefinition(t, "DECIMAL(10, 2) UNSIGNED ZEROFILL DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionFraction{DATATYPE_DECIMAL, 10, 2, true, true}, true, false, &DefaultDefinitionNull{}})
+	testGenColumnDefinition(t, "DECIMAL(10) UNSIGNED DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionFraction{DATATYPE_DECIMAL, 10, 0, true, false}, true, false, &DefaultDefinitionNull{}})
+	testGenColumnDefinition(t, "DECIMAL DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionFraction{DATATYPE_DECIMAL, 0, 0, false, false}, true, false, &DefaultDefinitionNull{}})
 }
 
 func testGenStatement(t *testing.T, expected string, input Statement) {

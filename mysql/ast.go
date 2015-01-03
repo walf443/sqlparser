@@ -239,7 +239,21 @@ func (x *DataTypeDefinitionNumber) ToQuery() string {
 
 func (x *DataTypeDefinitionFraction) data_type_definition() {}
 func (x *DataTypeDefinitionFraction) ToQuery() string {
-	return "TODO"
+	result := x.Type.String()
+	if x.Decimals == 0 {
+		if x.Length != 0 {
+			result += fmt.Sprintf("(%d)", x.Length)
+		}
+	} else {
+		result += fmt.Sprintf("(%d, %d)", x.Length, x.Decimals)
+	}
+	if x.Unsigned {
+		result += " UNSIGNED"
+	}
+	if x.Zerofill {
+		result += " ZEROFILL"
+	}
+	return result
 }
 func (x *DataTypeDefinitionString) data_type_definition() {}
 func (x *DataTypeDefinitionString) ToQuery() string {
