@@ -45,11 +45,6 @@ var keywords = map[string]int{
 	"MAX_ROWS":          MAX_ROWS,
 	"MIN_ROWS":          MIN_ROWS,
 	"ROW_FORMAT":        ROW_FORMAT,
-	"DYNAMIC":           DYNAMIC,
-	"FIXED":             FIXED,
-	"COMPRESSED":        COMPRESSED,
-	"REDUNDANT":         REDUNDANT,
-	"COMPACT":           COMPACT,
 
 	// datatypes
 	"BIT":        BIT,

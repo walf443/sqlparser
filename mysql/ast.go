@@ -60,6 +60,7 @@ type (
 	CreateTableStatement struct {
 		TableName         TableNameIdentifier
 		CreateDefinitions []CreateDefinition
+		TableOptions      []TableOption
 	}
 
 	CommentStatement struct {
@@ -344,4 +345,9 @@ func (x *DefaultDefinitionCurrentTimestamp) ToQuery() string {
 	} else {
 		return "DEFAULT CURRENT_TIMESTAMP"
 	}
+}
+
+type TableOption struct {
+	Key   string
+	Value string
 }

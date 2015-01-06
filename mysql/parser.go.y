@@ -21,6 +21,8 @@ type Token struct {
     statement Statement
     table_names []TableNameIdentifier
     table_name TableNameIdentifier
+    table_options []TableOption
+    table_option TableOption
     database_name DatabaseNameIdentifier
     column_name ColumnNameIdentifier
     column_names []ColumnNameIdentifier
@@ -37,6 +39,7 @@ type Token struct {
     uint uint
     fraction_option [2]uint
     tok       Token
+    str string
 }
 
 %type<statements> statements
@@ -58,6 +61,9 @@ type Token struct {
 %type<uint> length_option
 %type<fraction_option> fraction_option decimal_option
 %type<default_definition> default
+%type<table_option> table_option
+%type<table_options> skipable_table_options
+%type<str> storage_engine_name string
 
 %token<tok> IDENT NUMBER RAW COMMENT_START COMMENT_FINISH
 %token<tok> DROP CREATE ALTER ADD
@@ -99,7 +105,7 @@ statement
     }
     | CREATE TABLE table_name '(' create_definitions ')' skipable_table_options optional_statement_finish
     {
-        $$ = &CreateTableStatement{TableName: $3, CreateDefinitions: $5}
+        $$ = &CreateTableStatement{TableName: $3, CreateDefinitions: $5, TableOptions: $7}
     }
     | ALTER TABLE table_name alter_specifications ';'
     {
@@ -144,21 +150,92 @@ create_definition
 
 skipable_table_options
  :
+ {
+    $$ = []TableOption{}
+ }
  | skipable_table_options table_option
+ {
+    $$ = append($1, $2)
+ }
 
 table_option
-    :
-    | ENGINE skipable_equal storage_engine_name
+    : ENGINE skipable_equal storage_engine_name
+    {
+        var option TableOption
+        option.Key = "ENGINE"
+        option.Value = $3
+        $$ = option
+    }
     | AUTO_INCREMENT skipable_equal NUMBER
+    {
+        var option TableOption
+        option.Key = "AUTO_INCREMENT"
+        option.Value = $3.lit
+        $$ = option
+    }
     | AVG_ROW_LENGTH skipable_equal NUMBER
+    {
+        var option TableOption
+        option.Key = "AVG_ROW_LENGTH"
+        option.Value = $3.lit
+        $$ = option
+    }
     | CHECKSUM skipable_equal NUMBER
+    {
+        var option TableOption
+        option.Key = "CHECKSUM"
+        option.Value = $3.lit
+        $$ = option
+    }
     | COMMENT skipable_equal '\'' RAW '\''
+    {
+        var option TableOption
+        option.Key = "COMMENT"
+        option.Value = $4.lit
+        $$ = option
+    }
     | KEY_BLOCK_SIZE skipable_equal NUMBER
+    {
+        var option TableOption
+        option.Key = "KEY_BLOCK_SIZE"
+        option.Value = $3.lit
+        $$ = option
+    }
     | MAX_ROWS skipable_equal NUMBER
+    {
+        var option TableOption
+        option.Key = "MAX_ROWS"
+        option.Value = $3.lit
+        $$ = option
+    }
     | MIN_ROWS skipable_equal NUMBER
-    | ROW_FORMAT skipable_equal row_format
+    {
+        var option TableOption
+        option.Key = "MIN_ROWS"
+        option.Value = $3.lit
+        $$ = option
+    }
+    | ROW_FORMAT skipable_equal storage_engine_name
+    {
+        var option TableOption
+        option.Key = "ROW_FORMAT"
+        option.Value = $3
+        $$ = option
+    }
     | DEFAULT CHARSET skipable_equal string
+    {
+        var option TableOption
+        option.Key = "DEFAULT CHARACTER"
+        option.Value = $4
+        $$ = option
+    }
     | COLLATE skipable_equal string
+    {
+        var option TableOption
+        option.Key = "COLLATE"
+        option.Value = $3
+        $$ = option
+    }
 
 charset_or_character_set
     : CHARSET
@@ -185,14 +262,6 @@ skipable_index_type
     :
     | USING BTREE
     | USING HASH
-
-row_format
-    : DEFAULT
-    | DYNAMIC
-    | FIXED
-    | COMPRESSED
-    | REDUNDANT
-    | COMPACT
 
 table_names
     : table_name
@@ -318,8 +387,17 @@ default
 
 string
     : IDENT
+    {
+        $$ = $1.lit
+    }
     | '\'' RAW '\''
+    {
+        $$ = $2.lit
+    }
     | '"' RAW '"'
+    {
+        $$ = $2.lit
+    }
 
 autoincrement
     :
@@ -607,8 +685,17 @@ index_name
 
 storage_engine_name
     : IDENT
+    {
+        $$ = $1.lit
+    }
     | '\'' IDENT '\''
+    {
+        $$ = $2.lit
+    }
     | '"' IDENT '\''
+    {
+        $$ = $2.lit
+    }
 
 skipable_default
     :
