@@ -1,5 +1,6 @@
 package mysql
 
+//go:generate go tool yacc -o parser.go -v parser.output parser.go.y
 import (
 	"errors"
 	"fmt"
