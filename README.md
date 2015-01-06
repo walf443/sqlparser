@@ -1,4 +1,4 @@
-sqlparser
+sqlparser [![Build Status](https://secure.travis-ci.org/walf443/sqlparser.png)](http://travis-ci.org/walf443/sqlparser)
 ===============
 
 What is it?
