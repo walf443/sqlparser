@@ -1,5 +1,5 @@
 test: *.go parser.go
-	go test
+	go test -v ./...
 
 clean:
 	rm parser.go *.output
