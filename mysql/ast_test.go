@@ -36,6 +36,13 @@ func TestGenAlterStatement(t *testing.T) {
 	}})
 }
 
+func TestGenCreateTableStatement(t *testing.T) {
+	testGenStatement(t, "CREATE TABLE `hoge` (\n\t`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,\n\tPRIMARY KEY ( `id` )\n) ENGINE=InnoDB", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
+		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, true, &DefaultDefinitionEmpty{}}},
+		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
+	}, []TableOption{TableOption{"ENGINE", "InnoDB"}}})
+}
+
 func TestGenColumnDefinition(t *testing.T) {
 	testGenColumnDefinition(t, "INT DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}, true, false, &DefaultDefinitionNull{}})
 	testGenColumnDefinition(t, "INT(10) UNSIGNED DEFAULT NULL", ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, true, false, &DefaultDefinitionNull{}})

@@ -225,7 +225,7 @@ table_option
     | DEFAULT CHARSET skipable_equal string
     {
         var option TableOption
-        option.Key = "DEFAULT CHARACTER"
+        option.Key = "DEFAULT CHARACTER SET"
         option.Value = $4
         $$ = option
     }

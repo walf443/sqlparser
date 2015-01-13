@@ -34,6 +34,7 @@ type (
 
 	CreateDefinition interface {
 		create_definition()
+		ToQuery() string
 	}
 
 	DefaultDefinition interface {
@@ -96,7 +97,15 @@ func (x *AlterTableStatement) ToQuery() string {
 }
 func (x *CreateTableStatement) statement() {}
 func (x *CreateTableStatement) ToQuery() string {
-	return "TODO"
+	var options []string
+	for _, option := range x.TableOptions {
+		options = append(options, option.ToQuery())
+	}
+	var defs []string
+	for _, def := range x.CreateDefinitions {
+		defs = append(defs, def.ToQuery())
+	}
+	return "CREATE TABLE " + x.TableName.ToQuery() + " (\n\t"  +  strings.Join(defs, ",\n\t") + "\n) " + strings.Join(options, " ")
 }
 func (x *CommentStatement) statement() {}
 func (x *CommentStatement) ToQuery() string {
@@ -306,9 +315,41 @@ type (
 )
 
 func (x *CreateDefinitionColumn) create_definition()       {}
+func (x *CreateDefinitionColumn) ToQuery() string      {
+	return x.ColumnName.ToQuery() + " " + x.ColumnDefinition.ToQuery()
+}
 func (x *CreateDefinitionPrimaryIndex) create_definition() {}
+func (x *CreateDefinitionPrimaryIndex) ToQuery() string {
+	var columns []string
+	for _, column := range x.Columns {
+		columns = append(columns, column.ToQuery())
+	}
+	return "PRIMARY KEY ( " + strings.Join(columns, ",") +  " )"
+}
 func (x *CreateDefinitionUniqueIndex) create_definition()  {}
+func (x *CreateDefinitionUniqueIndex) ToQuery() string {
+	var columns []string
+	for _, column := range x.Columns {
+		columns = append(columns, column.ToQuery())
+	}
+	name := ""
+	if x.Name.Name != "" {
+		name = x.Name.ToQuery()
+	}
+	return "UNIQUE KEY " + name + " ( " + strings.Join(columns, ",") +  " )"
+}
 func (x *CreateDefinitionIndex) create_definition()        {}
+func (x *CreateDefinitionIndex) ToQuery() string {
+	var columns []string
+	for _, column := range x.Columns {
+		columns = append(columns, column.ToQuery())
+	}
+	name := ""
+	if x.Name.Name != "" {
+		name = x.Name.ToQuery()
+	}
+	return "INDEX " + name + " ( " + strings.Join(columns, ",") +  " )"
+}
 
 type (
 	DefaultDefinitionString struct {
@@ -350,4 +391,8 @@ func (x *DefaultDefinitionCurrentTimestamp) ToQuery() string {
 type TableOption struct {
 	Key   string
 	Value string
+}
+
+func (x *TableOption) ToQuery() string {
+	return x.Key + "=" + x.Value
 }
