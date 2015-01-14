@@ -5,28 +5,28 @@ import (
 )
 
 func TestGenDropTableStatement(t *testing.T) {
-	testGenStatement(t, "DROP TABLE `hoge`", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "hoge"}}})
-	testGenStatement(t, "DROP TABLE `fuga`, `hoge`", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "fuga"}, TableNameIdentifier{Name: "hoge"}}})
-	testGenStatement(t, "DROP TABLE `TABLE`", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "TABLE"}}})
-	testGenStatement(t, "DROP TABLE `hoge`.`fuga`", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name: "fuga"}}})
+	testGenStatement(t, "DROP TABLE `hoge`;", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "hoge"}}})
+	testGenStatement(t, "DROP TABLE `fuga`, `hoge`;", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "fuga"}, TableNameIdentifier{Name: "hoge"}}})
+	testGenStatement(t, "DROP TABLE `TABLE`;", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Name: "TABLE"}}})
+	testGenStatement(t, "DROP TABLE `hoge`.`fuga`;", &DropTableStatement{TableNames: []TableNameIdentifier{TableNameIdentifier{Database: "hoge", Name: "fuga"}}})
 }
 
 func TestGenDropDatabaseStatement(t *testing.T) {
-	testGenStatement(t, "DROP DATABASE `hoge`", &DropDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
+	testGenStatement(t, "DROP DATABASE `hoge`;", &DropDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
 }
 
 func TestGenCreateDatabaseStatement(t *testing.T) {
-	testGenStatement(t, "CREATE DATABASE `hoge`", &CreateDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
+	testGenStatement(t, "CREATE DATABASE `hoge`;", &CreateDatabaseStatement{DatabaseName: DatabaseNameIdentifier{Name: "hoge"}})
 }
 
 func TestGenAlterStatement(t *testing.T) {
-	testGenStatement(t, "ALTER TABLE `hoge` DROP `foo`", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+	testGenStatement(t, "ALTER TABLE `hoge` DROP `foo`;", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationDropColumn{ColumnNameIdentifier{"foo"}},
 	}})
-	testGenStatement(t, "ALTER TABLE `hoge` DROP INDEX `foo`", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+	testGenStatement(t, "ALTER TABLE `hoge` DROP INDEX `foo`;", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationDropIndex{IndexNameIdentifier{"foo"}},
 	}})
-	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` INT(10) UNSIGNED DEFAULT NULL", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` INT(10) UNSIGNED DEFAULT NULL;", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationAddColumn{ColumnNameIdentifier{"foo"}, ColumnDefinition{
 			&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false},
 			true,
@@ -37,7 +37,7 @@ func TestGenAlterStatement(t *testing.T) {
 }
 
 func TestGenCreateTableStatement(t *testing.T) {
-	testGenStatement(t, "CREATE TABLE `hoge` (\n\t`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,\n\t`another_id` INT(10) UNSIGNED NOT NULL ,\n\tPRIMARY KEY ( `id` ),\n\tUNIQUE KEY `another_id` ( `another_id` ),\n\tINDEX `another_id2` ( `another_id` )\n) ENGINE=InnoDB", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
+	testGenStatement(t, "CREATE TABLE `hoge` (\n\t`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,\n\t`another_id` INT(10) UNSIGNED NOT NULL ,\n\tPRIMARY KEY ( `id` ),\n\tUNIQUE KEY `another_id` ( `another_id` ),\n\tINDEX `another_id2` ( `another_id` )\n) ENGINE=InnoDB;", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, true, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionColumn{ColumnNameIdentifier{"another_id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
@@ -79,5 +79,5 @@ func testGenColumnDefinition(t *testing.T, expected string, input ColumnDefiniti
 	specAddColumn.ColumnDefinition = input
 	statement := AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{}}
 	statement.AlterSpecifications = append(statement.AlterSpecifications, &specAddColumn)
-	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` "+expected, &statement)
+	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` "+expected + ";", &statement)
 }

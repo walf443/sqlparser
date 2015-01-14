@@ -75,16 +75,16 @@ func (x *DropTableStatement) ToQuery() string {
 	for _, table := range x.TableNames {
 		tableNames = append(tableNames, table.ToQuery())
 	}
-	return "DROP TABLE " + strings.Join(tableNames, ", ")
+	return "DROP TABLE " + strings.Join(tableNames, ", ") + ";"
 }
 
 func (x *DropDatabaseStatement) statement() {}
 func (x *DropDatabaseStatement) ToQuery() string {
-	return "DROP DATABASE " + x.DatabaseName.ToQuery()
+	return "DROP DATABASE " + x.DatabaseName.ToQuery() + ";"
 }
 func (x *CreateDatabaseStatement) statement() {}
 func (x *CreateDatabaseStatement) ToQuery() string {
-	return "CREATE DATABASE " + x.DatabaseName.ToQuery()
+	return "CREATE DATABASE " + x.DatabaseName.ToQuery() + ";"
 }
 
 func (x *AlterTableStatement) statement() {}
@@ -93,7 +93,7 @@ func (x *AlterTableStatement) ToQuery() string {
 	for _, spec := range x.AlterSpecifications {
 		specQueries = append(specQueries, spec.ToQuery())
 	}
-	return "ALTER TABLE " + x.TableName.ToQuery() + " " + strings.Join(specQueries, ", ")
+	return "ALTER TABLE " + x.TableName.ToQuery() + " " + strings.Join(specQueries, ", ") + ";"
 }
 func (x *CreateTableStatement) statement() {}
 func (x *CreateTableStatement) ToQuery() string {
@@ -105,7 +105,7 @@ func (x *CreateTableStatement) ToQuery() string {
 	for _, def := range x.CreateDefinitions {
 		defs = append(defs, def.ToQuery())
 	}
-	return "CREATE TABLE " + x.TableName.ToQuery() + " (\n\t"  +  strings.Join(defs, ",\n\t") + "\n) " + strings.Join(options, " ")
+	return "CREATE TABLE " + x.TableName.ToQuery() + " (\n\t"  +  strings.Join(defs, ",\n\t") + "\n) " + strings.Join(options, " ") + ";"
 }
 func (x *CommentStatement) statement() {}
 func (x *CommentStatement) ToQuery() string {
