@@ -167,6 +167,11 @@ type (
 		ColumnName       ColumnNameIdentifier
 		ColumnDefinition ColumnDefinition
 	}
+	AlterSpecificationAddIndex struct {
+		IndexName       IndexNameIdentifier
+		Columns			[]ColumnNameIdentifier
+		Unique			bool
+	}
 )
 
 func (x *AlterSpecificationDropColumn) alterspecification() {}
@@ -181,6 +186,24 @@ func (x *AlterSpecificationDropIndex) ToQuery() string {
 func (x *AlterSpecificationAddColumn) alterspecification() {}
 func (x *AlterSpecificationAddColumn) ToQuery() string {
 	return "ADD " + x.ColumnName.ToQuery() + " " + x.ColumnDefinition.ToQuery()
+}
+
+func (x *AlterSpecificationAddIndex) alterspecification() {}
+func (x *AlterSpecificationAddIndex) ToQuery() string {
+	result := "ADD "
+	if x.Unique {
+		result = result + "UNIQUE "
+	}
+	result = result + "INDEX "
+	if x.IndexName.Name != "" {
+		result = result + x.IndexName.ToQuery() + " "
+	}
+	var columnNames []string
+	for _, col := range x.Columns {
+		columnNames = append(columnNames, col.ToQuery())
+	}
+	result = result + "(" + strings.Join(columnNames, ", ") + ")"
+	return result
 }
 
 func (x ColumnDefinition) ToQuery() string {

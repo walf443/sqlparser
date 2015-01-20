@@ -26,6 +26,15 @@ func TestGenAlterStatement(t *testing.T) {
 	testGenStatement(t, "ALTER TABLE `hoge` DROP INDEX `foo`;", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationDropIndex{IndexNameIdentifier{"foo"}},
 	}})
+	testGenStatement(t, "ALTER TABLE `hoge` ADD INDEX `foo` (`bar`, `baz`);", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationAddIndex{IndexNameIdentifier{"foo"}, []ColumnNameIdentifier{ColumnNameIdentifier{"bar"}, ColumnNameIdentifier{"baz"}}, false},
+	}})
+	testGenStatement(t, "ALTER TABLE `hoge` ADD INDEX (`bar`, `baz`);", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationAddIndex{IndexNameIdentifier{""}, []ColumnNameIdentifier{ColumnNameIdentifier{"bar"}, ColumnNameIdentifier{"baz"}}, false},
+	}})
+	testGenStatement(t, "ALTER TABLE `hoge` ADD UNIQUE INDEX (`bar`, `baz`);", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
+		&AlterSpecificationAddIndex{IndexNameIdentifier{""}, []ColumnNameIdentifier{ColumnNameIdentifier{"bar"}, ColumnNameIdentifier{"baz"}}, true},
+	}})
 	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` INT(10) UNSIGNED DEFAULT NULL;", &AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{
 		&AlterSpecificationAddColumn{ColumnNameIdentifier{"foo"}, ColumnDefinition{
 			&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false},
@@ -79,5 +88,5 @@ func testGenColumnDefinition(t *testing.T, expected string, input ColumnDefiniti
 	specAddColumn.ColumnDefinition = input
 	statement := AlterTableStatement{TableNameIdentifier{Name: "hoge", Database: ""}, []AlterSpecification{}}
 	statement.AlterSpecifications = append(statement.AlterSpecifications, &specAddColumn)
-	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` "+expected + ";", &statement)
+	testGenStatement(t, "ALTER TABLE `hoge` ADD `foo` "+expected+";", &statement)
 }

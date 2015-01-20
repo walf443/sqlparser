@@ -316,6 +316,14 @@ alter_specification
     {
         $$ = &AlterSpecificationAddColumn{ColumnName: $3, ColumnDefinition: $4}
     }
+    | ADD index_or_key skipable_index_name skipable_index_type '(' index_column_names ')'
+    {
+        $$ = &AlterSpecificationAddIndex{IndexName: $3, Columns: $6, Unique: false}
+    }
+    | ADD UNIQUE index_or_key skipable_index_name skipable_index_type '(' index_column_names ')'
+    {
+        $$ = &AlterSpecificationAddIndex{IndexName: $4, Columns: $7, Unique: true}
+    }
     | DROP index_or_key index_name
     {
         $$ = &AlterSpecificationDropIndex{IndexName: $3}

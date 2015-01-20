@@ -50,6 +50,11 @@ func TestParseAlterTableStatement(t *testing.T) {
 	testStatement(t, "alter table `hoge` DROP INDEX `fuga`", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationDropIndex{IndexNameIdentifier{Name: "fuga"}}}})
 
 	testStatement(t, "alter table `hoge` ADD COLUMN `fuga` INT", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddColumn{ColumnNameIdentifier{Name: "fuga"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 0, false, false}, true, false, &DefaultDefinitionEmpty{}}}}})
+
+	testStatement(t, "alter table `hoge` ADD INDEX `fuga` (foo, bar)", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddIndex{IndexNameIdentifier{Name: "fuga"}, []ColumnNameIdentifier{ColumnNameIdentifier{"foo"}, ColumnNameIdentifier{"bar"}}, false}}})
+	testStatement(t, "alter table `hoge` ADD INDEX (foo, bar)", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddIndex{IndexNameIdentifier{Name: ""}, []ColumnNameIdentifier{ColumnNameIdentifier{"foo"}, ColumnNameIdentifier{"bar"}}, false}}})
+	testStatement(t, "alter table `hoge` ADD UNIQUE INDEX `fuga` (foo, bar)", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddIndex{IndexNameIdentifier{Name: "fuga"}, []ColumnNameIdentifier{ColumnNameIdentifier{"foo"}, ColumnNameIdentifier{"bar"}}, true}}})
+	testStatement(t, "alter table `hoge` ADD UNIQUE INDEX (foo, bar)", &AlterTableStatement{TableNameIdentifier{Name: "hoge"}, []AlterSpecification{&AlterSpecificationAddIndex{IndexNameIdentifier{Name: ""}, []ColumnNameIdentifier{ColumnNameIdentifier{"foo"}, ColumnNameIdentifier{"bar"}}, true}}})
 }
 
 func TestParseCommentStatement(t *testing.T) {
