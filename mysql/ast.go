@@ -105,7 +105,7 @@ func (x *CreateTableStatement) ToQuery() string {
 	for _, def := range x.CreateDefinitions {
 		defs = append(defs, def.ToQuery())
 	}
-	return "CREATE TABLE " + x.TableName.ToQuery() + " (\n\t"  +  strings.Join(defs, ",\n\t") + "\n) " + strings.Join(options, " ") + ";"
+	return "CREATE TABLE " + x.TableName.ToQuery() + " (\n\t" + strings.Join(defs, ",\n\t") + "\n) " + strings.Join(options, " ") + ";"
 }
 func (x *CommentStatement) statement() {}
 func (x *CommentStatement) ToQuery() string {
@@ -161,16 +161,16 @@ type (
 		ColumnName ColumnNameIdentifier
 	}
 	AlterSpecificationDropIndex struct {
-		IndexName IndexNameIdentifier
+		Name IndexNameIdentifier
 	}
 	AlterSpecificationAddColumn struct {
 		ColumnName       ColumnNameIdentifier
 		ColumnDefinition ColumnDefinition
 	}
 	AlterSpecificationAddIndex struct {
-		IndexName       IndexNameIdentifier
-		Columns			[]ColumnNameIdentifier
-		Unique			bool
+		Name    IndexNameIdentifier
+		Columns []ColumnNameIdentifier
+		Unique  bool
 	}
 )
 
@@ -181,7 +181,7 @@ func (x *AlterSpecificationDropColumn) ToQuery() string {
 
 func (x *AlterSpecificationDropIndex) alterspecification() {}
 func (x *AlterSpecificationDropIndex) ToQuery() string {
-	return "DROP INDEX " + x.IndexName.ToQuery()
+	return "DROP INDEX " + x.Name.ToQuery()
 }
 func (x *AlterSpecificationAddColumn) alterspecification() {}
 func (x *AlterSpecificationAddColumn) ToQuery() string {
@@ -195,8 +195,8 @@ func (x *AlterSpecificationAddIndex) ToQuery() string {
 		result = result + "UNIQUE "
 	}
 	result = result + "INDEX "
-	if x.IndexName.Name != "" {
-		result = result + x.IndexName.ToQuery() + " "
+	if x.Name.Name != "" {
+		result = result + x.Name.ToQuery() + " "
 	}
 	var columnNames []string
 	for _, col := range x.Columns {
@@ -337,8 +337,8 @@ type (
 	}
 )
 
-func (x *CreateDefinitionColumn) create_definition()       {}
-func (x *CreateDefinitionColumn) ToQuery() string      {
+func (x *CreateDefinitionColumn) create_definition() {}
+func (x *CreateDefinitionColumn) ToQuery() string {
 	return x.ColumnName.ToQuery() + " " + x.ColumnDefinition.ToQuery()
 }
 func (x *CreateDefinitionPrimaryIndex) create_definition() {}
@@ -347,9 +347,9 @@ func (x *CreateDefinitionPrimaryIndex) ToQuery() string {
 	for _, column := range x.Columns {
 		columns = append(columns, column.ToQuery())
 	}
-	return "PRIMARY KEY ( " + strings.Join(columns, ",") +  " )"
+	return "PRIMARY KEY ( " + strings.Join(columns, ",") + " )"
 }
-func (x *CreateDefinitionUniqueIndex) create_definition()  {}
+func (x *CreateDefinitionUniqueIndex) create_definition() {}
 func (x *CreateDefinitionUniqueIndex) ToQuery() string {
 	var columns []string
 	for _, column := range x.Columns {
@@ -359,9 +359,9 @@ func (x *CreateDefinitionUniqueIndex) ToQuery() string {
 	if x.Name.Name != "" {
 		name = x.Name.ToQuery()
 	}
-	return "UNIQUE KEY " + name + " ( " + strings.Join(columns, ",") +  " )"
+	return "UNIQUE KEY " + name + " ( " + strings.Join(columns, ",") + " )"
 }
-func (x *CreateDefinitionIndex) create_definition()        {}
+func (x *CreateDefinitionIndex) create_definition() {}
 func (x *CreateDefinitionIndex) ToQuery() string {
 	var columns []string
 	for _, column := range x.Columns {
@@ -371,7 +371,7 @@ func (x *CreateDefinitionIndex) ToQuery() string {
 	if x.Name.Name != "" {
 		name = x.Name.ToQuery()
 	}
-	return "INDEX " + name + " ( " + strings.Join(columns, ",") +  " )"
+	return "INDEX " + name + " ( " + strings.Join(columns, ",") + " )"
 }
 
 type (
