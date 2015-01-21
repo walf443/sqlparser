@@ -417,5 +417,10 @@ type TableOption struct {
 }
 
 func (x *TableOption) ToQuery() string {
-	return x.Key + "=" + x.Value
+	switch x.Key {
+	case "COMMENT":
+		return x.Key + " " + "\"" + x.Value + "\""
+	default:
+		return x.Key + "=" + x.Value
+	}
 }

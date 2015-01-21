@@ -46,13 +46,13 @@ func TestGenAlterStatement(t *testing.T) {
 }
 
 func TestGenCreateTableStatement(t *testing.T) {
-	testGenStatement(t, "CREATE TABLE `hoge` (\n\t`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,\n\t`another_id` INT(10) UNSIGNED NOT NULL ,\n\tPRIMARY KEY ( `id` ),\n\tUNIQUE KEY `another_id` ( `another_id` ),\n\tINDEX `another_id2` ( `another_id` )\n) ENGINE=InnoDB;", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
+	testGenStatement(t, "CREATE TABLE `hoge` (\n\t`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,\n\t`another_id` INT(10) UNSIGNED NOT NULL ,\n\tPRIMARY KEY ( `id` ),\n\tUNIQUE KEY `another_id` ( `another_id` ),\n\tINDEX `another_id2` ( `another_id` )\n) ENGINE=InnoDB COMMENT \"hoge\";", &CreateTableStatement{TableNameIdentifier{"hoge", ""}, []CreateDefinition{
 		&CreateDefinitionColumn{ColumnNameIdentifier{"id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, true, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionColumn{ColumnNameIdentifier{"another_id"}, ColumnDefinition{&DataTypeDefinitionNumber{DATATYPE_INT, 10, true, false}, false, false, &DefaultDefinitionEmpty{}}},
 		&CreateDefinitionPrimaryIndex{[]ColumnNameIdentifier{ColumnNameIdentifier{"id"}}},
 		&CreateDefinitionUniqueIndex{IndexNameIdentifier{"another_id"}, []ColumnNameIdentifier{ColumnNameIdentifier{"another_id"}}},
 		&CreateDefinitionIndex{IndexNameIdentifier{"another_id2"}, []ColumnNameIdentifier{ColumnNameIdentifier{"another_id"}}},
-	}, []TableOption{TableOption{"ENGINE", "InnoDB"}}})
+	}, []TableOption{TableOption{"ENGINE", "InnoDB"}, TableOption{"COMMENT", "hoge"}}})
 }
 
 func TestGenColumnDefinition(t *testing.T) {
